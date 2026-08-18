@@ -224,14 +224,25 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block;}
   color:#fff;border-color:transparent;
   box-shadow:0 3px 10px rgba(139,92,246,.3);
 }
-.tabs.chip-row{padding:4px 14px 10px;gap:6px;}
+.tabs.chip-row{
+  padding:10px 14px 12px;gap:6px;
+  display:flex;flex-wrap:wrap;align-items:center;
+}
+.tabs.chip-row .tags-lbl{
+  font-size:13.5px;font-weight:700;text-decoration:underline;
+  color:var(--text);margin-right:4px;flex:none;
+}
 .tab.chip{
-  font-size:12px;padding:5px 11px;font-weight:600;
-  background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-dim);
+  font-size:12.5px;padding:5px 11px;font-weight:600;
+  background:#8AB4F8;border:none;color:#fff;border-radius:5px;
+  box-shadow:none;line-height:1.3;
 }
 .tab.chip.active{
-  background:var(--accent-dim);color:var(--blue);border-color:var(--blue);box-shadow:none;
+  background:#6B9AE8;color:#fff;border:none;
+  box-shadow:0 0 0 2px rgba(255,255,255,.25);
 }
+html[data-theme="light"] .tab.chip{background:#6B9AE8;color:#fff;}
+html[data-theme="light"] .tab.chip.active{background:#4A7FD4;color:#fff;}
 
 /* ---------- Trending / top-view banner ---------- */
 .trending-wrap{padding:4px 14px 4px;}
@@ -416,6 +427,44 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block;}
   transform:translateY(-10px);transition:transform .15s ease;
 }
 .nav-upload:active{transform:translateY(-10px) scale(.9);}
+
+/* ---------- Media Tags (detail page) ---------- */
+.media-tags{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+  margin-top:14px;padding:12px 0 4px;
+}
+.media-tags .tags-lbl{
+  font-size:13.5px;font-weight:700;text-decoration:underline;
+  color:var(--text);margin-right:4px;flex:none;
+}
+.media-tags .tag-chip{
+  display:inline-block;padding:5px 11px;border-radius:5px;
+  background:#8AB4F8;color:#fff;font-size:12.5px;font-weight:600;
+  line-height:1.3;white-space:nowrap;
+}
+html[data-theme="light"] .media-tags .tag-chip{background:#6B9AE8;color:#fff;}
+
+/* ---------- Adsterra Banner Ad ---------- */
+.ad-banner-wrap{
+  position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
+  z-index:45;background:var(--bg-elevated);border-top:1px solid var(--border);
+  box-shadow:0 -4px 18px rgba(0,0,0,.25);display:none;
+}
+.ad-banner-wrap.show{display:block;}
+.ad-banner-inner{
+  position:relative;max-width:728px;margin:0 auto;
+  min-height:60px;display:flex;align-items:center;justify-content:center;
+  padding:6px 36px 6px 8px;overflow:hidden;
+}
+.ad-banner-slot{width:100%;min-height:50px;display:flex;align-items:center;justify-content:center;}
+.ad-close-btn{
+  position:absolute;top:4px;right:6px;width:26px;height:26px;border-radius:50%;
+  background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;line-height:1;z-index:2;cursor:pointer;
+  border:1px solid rgba(255,255,255,.2);
+}
+.ad-close-btn:active{transform:scale(.9);}
+body.has-ad-banner{padding-bottom:calc(var(--nav-h) + 70px + env(safe-area-inset-bottom,0px));}
 
 /* ---------- Modal ---------- */
 .modal-overlay{
@@ -883,7 +932,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ট্যাগ রো -->
 <div class="tabs chip-row" id="categoryChips">
-  <button class="tab chip active" onclick="setCategoryFilter('all', this)">সব ট্যাগ</button>
+  <span class="tags-lbl">Tags:</span>
+  <button class="tab chip active" onclick="setCategoryFilter('all', this)">সব</button>
 </div>
 
 <!-- ফিড (গ্রিড) -->
@@ -1202,6 +1252,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="funny">মজার ভিডিও</option>
         </select>
       </div>
+      <div class="field">
+        <label>ট্যাগ (কমা দিয়ে আলাদা করুন)</label>
+        <input type="text" id="uploadTags" placeholder="যেমন: rashmika, desi girl, indian film">
+      </div>
 
       <div class="progress-bar" id="uploadProgress"><div class="progress-fill"></div></div>
       <div class="progress-label" id="uploadProgressLabel"></div>
@@ -1501,6 +1555,11 @@ function escapeHtml(str) {
   d.textContent = str || '';
   return d.innerHTML;
 }
+function tagsHTML(item) {
+  const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean) : [];
+  if (!tags.length) return '';
+  return `<div class="media-tags"><span class="tags-lbl">Tags:</span>${tags.map(t => `<span class="tag-chip">${escapeHtml(t)}</span>`).join('')}</div>`;
+}
 function timeAgo(ts) {
   if (!ts) return 'এইমাত্র';
   const date = ts.toDate ? ts.toDate() : new Date(ts);
@@ -1564,8 +1623,8 @@ function renderCategoryChips() {
   if (!wrap) return;
   const activeId = (typeof feedCache !== 'undefined' && feedCache.category) ? feedCache.category : 'all';
   const list = CATEGORY_LIST_DYNAMIC.length ? CATEGORY_LIST_DYNAMIC : DEFAULT_TAGS;
-  const chips = [{ id: 'all', label: 'সব ট্যাগ' }].concat(list);
-  wrap.innerHTML = chips.map(c =>
+  const chips = [{ id: 'all', label: 'সব' }].concat(list);
+  wrap.innerHTML = `<span class="tags-lbl">Tags:</span>` + chips.map(c =>
     `<button class="tab chip ${c.id === activeId ? 'active' : ''}" onclick="setCategoryFilter('${c.id}', this)">${escapeHtml(c.label)}</button>`
   ).join('');
 }
@@ -2099,6 +2158,8 @@ async function handlePhotoUpload(e) {
   const files = isMulti ? (window._selectedFiles || []) : (window._selectedFile ? [window._selectedFile] : []);
   const caption = document.getElementById('uploadCaption').value.trim();
   const category = document.getElementById('uploadCategory').value;
+  const tagsRaw = (document.getElementById('uploadTags')?.value || '').trim();
+  const tags = tagsRaw ? tagsRaw.split(/[,،]+/).map(t => t.trim()).filter(Boolean).slice(0, 25) : [];
   if (!files.length) { showToast(isMulti ? 'একাধিক ফটো সিলেক্ট করুন' : 'একটি ফটো সিলেক্ট করুন'); return; }
   if (!caption) { showToast('একটি ক্যাপশন/শিরোনাম লিখুন'); return; }
   if (!IMGBB_API_KEY || IMGBB_API_KEY === 'YOUR_IMGBB_API_KEY') {
@@ -2133,7 +2194,7 @@ async function handlePhotoUpload(e) {
       type: 'photo',
       url: cover.url,
       thumbUrl: cover.thumbUrl,
-      caption, category,
+      caption, category, tags,
       uploaderUid: currentUser.uid,
       uploaderName: currentUserData?.displayName || currentUser.email,
       uploaderPhoto: currentUserData?.photoURL || currentUser.photoURL || '',
@@ -2175,6 +2236,8 @@ async function handleVideoUpload() {
   const file = window._selectedFile;
   const caption = document.getElementById('uploadCaption').value.trim();
   const category = document.getElementById('uploadCategory').value;
+  const tagsRaw = (document.getElementById('uploadTags')?.value || '').trim();
+  const tags = tagsRaw ? tagsRaw.split(/[,،]+/).map(t => t.trim()).filter(Boolean).slice(0, 25) : [];
   if (!file) { showToast('একটি ভিডিও সিলেক্ট করুন'); return; }
   if (!caption) { showToast('একটি ক্যাপশন/শিরোনাম লিখুন'); return; }
 
@@ -2198,7 +2261,7 @@ async function handleVideoUpload() {
     await db.collection('media').add({
       type: 'video',
       url, thumbUrl, duration,
-      caption, category,
+      caption, category, tags,
       uploaderUid: currentUser.uid,
       uploaderName: currentUserData?.displayName || currentUser.email,
       uploaderPhoto: currentUserData?.photoURL || currentUser.photoURL || '',
@@ -2295,6 +2358,7 @@ function renderVideo() {
         </button>
       </div>
     </div>
+    ${tagsHTML(v)}
   `;
 
   // লগইন গেট
@@ -2520,6 +2584,7 @@ function renderPhoto() {
         </button>
       </div>
     </div>
+    ${tagsHTML(p)}
   `;
 
   const gate = document.getElementById('photoGate');
@@ -2714,6 +2779,45 @@ function route() {
 window.addEventListener('hashchange', route);
 document.addEventListener('DOMContentLoaded', route);
 
+</script>
+
+<!-- ============ Adsterra Banner Ad ============ -->
+<div class="ad-banner-wrap" id="adBannerWrap">
+  <div class="ad-banner-inner">
+    <button type="button" class="ad-close-btn" id="adCloseBtn" title="বন্ধ করুন">✕</button>
+    <div class="ad-banner-slot" id="adBannerSlot">
+      <div style="width:100%;min-height:50px;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:12px;">
+        Adsterra Banner — এখানে আপনার কোড বসান
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const AD_ROTATE_MS = 15000;
+  const STORAGE_KEY = 'xboss_ad_closed';
+  const wrap = document.getElementById('adBannerWrap');
+  const closeBtn = document.getElementById('adCloseBtn');
+  if (!wrap || !closeBtn) return;
+  if (sessionStorage.getItem(STORAGE_KEY) === '1') return;
+
+  function showBanner() {
+    wrap.classList.add('show');
+    document.body.classList.add('has-ad-banner');
+  }
+  function hideBanner() {
+    wrap.classList.remove('show');
+    document.body.classList.remove('has-ad-banner');
+    sessionStorage.setItem(STORAGE_KEY, '1');
+  }
+  closeBtn.addEventListener('click', hideBanner);
+  showBanner();
+
+  setInterval(() => {
+    if (!wrap.classList.contains('show')) return;
+  }, AD_ROTATE_MS);
+})();
 </script>
 </body>
 </html>
