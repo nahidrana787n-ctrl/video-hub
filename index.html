@@ -244,13 +244,11 @@ html[data-theme="light"] .theme-toggle .i-moon{display:block;}
 html[data-theme="light"] .tab.chip{background:#6B9AE8;color:#fff;}
 html[data-theme="light"] .tab.chip.active{background:#4A7FD4;color:#fff;}
 
-/* Media Tags detail */
 .media-tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:14px;padding:12px 0 4px;}
 .media-tags .tags-lbl{font-size:13.5px;font-weight:700;text-decoration:underline;color:var(--text);margin-right:4px;flex:none;}
 .media-tags .tag-chip{display:inline-block;padding:5px 11px;border-radius:5px;background:#8AB4F8;color:#fff;font-size:12.5px;font-weight:600;line-height:1.3;white-space:nowrap;}
 html[data-theme="light"] .media-tags .tag-chip{background:#6B9AE8;color:#fff;}
 
-/* Adsterra Banner */
 .ad-banner-wrap{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:45;background:var(--bg-elevated);border-top:1px solid var(--border);box-shadow:0 -4px 18px rgba(0,0,0,.25);display:none;}
 .ad-banner-wrap.show{display:block;}
 .ad-banner-inner{position:relative;max-width:728px;margin:0 auto;min-height:60px;display:flex;align-items:center;justify-content:center;padding:6px 36px 6px 8px;overflow:hidden;}
@@ -2767,23 +2765,43 @@ document.addEventListener('DOMContentLoaded', route);
 </div>
 <script>
 (function () {
+  // ক্লোজ করলে ৯০ সেকেন্ড (১.৫ মিনিট) পর আবার দেখাবে
+  // পেজ রিফ্রেশ করলেও অ্যাড আবার আসবে (শুধু কুলডাউন চলতে থাকলে লুকিয়ে থাকবে)
   const AD_ROTATE_MS = 15000;
-  const STORAGE_KEY = 'xboss_ad_closed';
+  const HIDE_MS = 90 * 1000; // 1.5 মিনিট — চাইলে 120*1000 করুন (২ মিনিট)
+  const STORAGE_KEY = 'xboss_ad_hide_until';
   const wrap = document.getElementById('adBannerWrap');
   const slot = document.getElementById('adBannerSlot');
   const closeBtn = document.getElementById('adCloseBtn');
   if (!wrap || !slot || !closeBtn) return;
-  if (sessionStorage.getItem(STORAGE_KEY) === '1') return;
+
+  let rotateTimer = null;
+  let showTimer = null;
 
   function showBanner() {
     wrap.classList.add('show');
     document.body.classList.add('has-ad-banner');
+    loadAd();
+    if (rotateTimer) clearInterval(rotateTimer);
+    rotateTimer = setInterval(function () {
+      if (!wrap.classList.contains('show')) return;
+      loadAd();
+    }, AD_ROTATE_MS);
   }
+
   function hideBanner() {
     wrap.classList.remove('show');
     document.body.classList.remove('has-ad-banner');
-    sessionStorage.setItem(STORAGE_KEY, '1');
+    if (rotateTimer) { clearInterval(rotateTimer); rotateTimer = null; }
+    const until = Date.now() + HIDE_MS;
+    try { sessionStorage.setItem(STORAGE_KEY, String(until)); } catch (e) {}
+    if (showTimer) clearTimeout(showTimer);
+    showTimer = setTimeout(function () {
+      try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      showBanner();
+    }, HIDE_MS);
   }
+
   closeBtn.addEventListener('click', hideBanner);
 
   function loadAd() {
@@ -2797,12 +2815,20 @@ document.addEventListener('DOMContentLoaded', route);
     slot.appendChild(s);
   }
 
-  showBanner();
-  loadAd();
-  setInterval(function () {
-    if (!wrap.classList.contains('show')) return;
-    loadAd();
-  }, AD_ROTATE_MS);
+  // লোড/রিফ্রেশ: কুলডাউন চলছে কিনা চেক
+  var hideUntil = 0;
+  try { hideUntil = parseInt(sessionStorage.getItem(STORAGE_KEY) || '0', 10) || 0; } catch (e) {}
+  var now = Date.now();
+  if (hideUntil > now) {
+    // এখনো লুকানো — বাকি সময় পর দেখাও
+    showTimer = setTimeout(function () {
+      try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      showBanner();
+    }, hideUntil - now);
+  } else {
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    showBanner();
+  }
 })();
 </script>
 </body>
