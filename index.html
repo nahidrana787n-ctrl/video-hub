@@ -686,6 +686,17 @@
             </div>
         </section>
 
+        <!-- TASK VIEW (admin-posted tasks, user submits screenshot proof) -->
+        <section id="view-task" class="spa-view hidden space-y-4">
+            <div class="glass-card text-white p-5 rounded-3xl shadow-xl space-y-2 border border-white/20">
+                <h2 class="text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> টাস্ক করে আয় করুন</h2>
+                <p class="text-xs text-cyan-200">নিচের টাস্কগুলো সম্পন্ন করুন এবং কাজের প্রুফ (স্ক্রিনশট) জমা দিন। এডমিন যাচাই করার পর টাকা যোগ হবে।</p>
+            </div>
+            <div id="task-list-container" class="space-y-3">
+                <div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">টাস্ক লোড হচ্ছে...</div>
+            </div>
+        </section>
+
         <section id="view-lucky-spin" class="spa-view hidden space-y-4">
             <div class="glass-card text-white p-6 rounded-3xl shadow-2xl text-center space-y-4 relative overflow-hidden border border-cyan-400/30">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/20 rounded-full blur-2xl"></div>
@@ -948,6 +959,8 @@
             getFirestore, doc, setDoc, onSnapshot, serverTimestamp, addDoc, collection, updateDoc, increment, query, where, getDocs, orderBy, limit, arrayUnion, getDoc 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        const IMGBB_API_KEY = "2f4740664c4a72000fd4853b6d218457";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAwqJkpVWA2gnn6GoabKJD7bWmHSoGhT8Y",
             authDomain: "bot-telegram-refar.firebaseapp.com",
@@ -972,6 +985,9 @@
         let currentUserDoc = null;
         let spinPrizes = [2, 3, 5, 7, 9, 10, 12, 16, 20, 0, 9, 0, 0, 0, 0, 6, 3, 2, 8];
         let spinDailyLimit = 5;
+        let tasksListenersReady = false;
+        let allActiveTasks = [];
+        let myTaskProofsMap = {};
 
         // Draws the prize labels + segment shading on the spin wheel to match the current spinPrizes array
         function renderSpinWheelVisual(prizes) {
@@ -1380,10 +1396,15 @@
         };
 
         const projects = [
+            { id: "task", name: "টাস্ক করে আয়", icon: "fa-solid fa-list-check text-emerald-400", route: "#task", paused: false },
             { id: "quiz", name: "কুইজ খেলে আয়", icon: "fa-solid fa-brain text-violet-400", route: "#quiz", paused: false },
             { id: "lucky-spin", name: "লাকি স্পিন", icon: "fa-solid fa-rotate text-cyan-400", route: "#lucky-spin", paused: false },
             { id: "survey", name: "সার্ভে করে আয়", icon: "fa-solid fa-square-poll-vertical text-lime-400", route: "#survey", paused: false }
         ];
+
+        function esc(s) {
+            return (s === undefined || s === null ? '' : s.toString()).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
 
         function renderProjects() {
             const container = document.querySelector('#projects-grid-container');
@@ -1427,7 +1448,7 @@
             }
 
             const isNotVerified = !currentUserDoc || currentUserDoc.accountStatus !== 'verified';
-            const lockedRoutes = ['#math-job', '#typing-job', '#job-post', '#withdraw', '#lucky-spin', '#raffle-draw', '#quiz', '#survey'];
+            const lockedRoutes = ['#math-job', '#typing-job', '#job-post', '#withdraw', '#lucky-spin', '#raffle-draw', '#quiz', '#survey', '#task'];
             
             if (currentUser && isNotVerified && lockedRoutes.includes(cleanHash)) {
                 Swal.fire({
@@ -1456,6 +1477,10 @@
                 document.querySelector('#survey-question-panel')?.classList.add('hidden');
                 document.querySelector('#survey-list-container')?.classList.remove('hidden');
                 renderSurveyList();
+            }
+            if (cleanHash === '#inbox') {
+                localStorage.setItem('inbox_last_seen', Date.now().toString());
+                document.querySelector('#inbox-red-light')?.classList.add('hidden');
             }
 
             closeDrawer();
@@ -1531,6 +1556,8 @@
                     listenToUserWithdrawalHistory();
                     listenToSystemNoticeConfig();
                     listenToAdminDynamicConfig();
+                    listenToTasks();
+                    listenToInboxNotices();
                 });
             } else {
                 currentUser = null;
@@ -1699,6 +1726,142 @@
                 `).join('');
             });
         }
+
+        function listenToTasks() {
+            if (!currentUser) return;
+            const container = document.querySelector('#task-list-container');
+            if (!container) return;
+            if (tasksListenersReady) { renderTaskListUI(); return; }
+            tasksListenersReady = true;
+
+            onSnapshot(query(collection(db, "jobs"), where("status", "==", "active")), (snapshot) => {
+                allActiveTasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                allActiveTasks.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                renderTaskListUI();
+            });
+
+            onSnapshot(query(collection(db, "job_proofs"), where("userId", "==", currentUser.uid)), (snapshot) => {
+                myTaskProofsMap = {};
+                snapshot.forEach(d => {
+                    const p = d.data();
+                    if (p.jobId) myTaskProofsMap[p.jobId] = p.status || 'pending';
+                });
+                renderTaskListUI();
+            });
+        }
+
+        function renderTaskListUI() {
+            const container = document.querySelector('#task-list-container');
+            if (!container) return;
+
+            if (!allActiveTasks.length) {
+                container.innerHTML = '<div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">এই মুহূর্তে কোনো টাস্ক নেই। পরে আবার চেক করুন।</div>';
+                return;
+            }
+
+            const typeLabels = { telegram: 'টেলিগ্রাম', website: 'ওয়েবসাইট', app: 'অ্যাপ ইন্সটল', other: 'অন্যান্য' };
+            const typeIcons = { telegram: 'fa-brands fa-telegram', website: 'fa-solid fa-globe', app: 'fa-solid fa-mobile-screen', other: 'fa-solid fa-list-check' };
+
+            container.innerHTML = allActiveTasks.map(job => {
+                const status = myTaskProofsMap[job.id];
+                let actionHtml = '';
+                if (status === 'approved') {
+                    actionHtml = `<span class="px-3 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> সম্পন্ন ও পেমেন্ট হয়েছে</span>`;
+                } else if (status === 'pending') {
+                    actionHtml = `<span class="px-3 py-2 rounded-xl bg-amber-500/20 text-amber-300 text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> যাচাই হচ্ছে...</span>`;
+                } else if (status === 'rejected') {
+                    actionHtml = `<button onclick="window.openTaskProofForm('${job.id}')" class="px-3 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 text-white text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-rotate-right"></i> আবার জমা দিন</button>`;
+                } else {
+                    actionHtml = `<button onclick="window.openTaskProofForm('${job.id}')" class="px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-upload"></i> প্রুফ জমা দিন</button>`;
+                }
+
+                return `
+                <div class="glass-card p-4 rounded-3xl border border-white/20 shadow-xl space-y-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-9 h-9 rounded-xl bg-slate-950 border border-white/10 flex items-center justify-center text-cyan-400 text-sm shrink-0">
+                                <i class="${typeIcons[job.type] || 'fa-solid fa-list-check'}"></i>
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold uppercase text-cyan-300">${typeLabels[job.type] || 'টাস্ক'}</span>
+                                <h4 class="font-bold text-sm text-white leading-tight">${job.title || ''}</h4>
+                            </div>
+                        </div>
+                        <span class="font-en font-black text-amber-300 text-sm whitespace-nowrap">৳${(Number(job.reward)||0).toFixed(2)}</span>
+                    </div>
+                    ${job.desc ? `<p class="text-xs text-cyan-100 leading-relaxed">${job.desc}</p>` : ''}
+                    <div class="flex items-center gap-2 flex-wrap pt-1">
+                        ${job.url ? `<a href="${job.url}" target="_blank" rel="noopener" class="px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-arrow-up-right-from-square"></i> টাস্কে যান</a>` : ''}
+                        ${actionHtml}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function uploadImageToImgbb(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await res.json();
+            if (!result.success) throw new Error(result.error?.message || 'ছবি আপলোড ব্যর্থ হয়েছে, আবার চেষ্টা করুন।');
+            return result.data.url;
+        }
+
+        window.openTaskProofForm = async function(jobId) {
+            if (!currentUser) return Swal.fire('ত্রুটি!', 'লগইন করুন।', 'error');
+            const job = allActiveTasks.find(j => j.id === jobId);
+            if (!job) return;
+
+            const { value: formValues } = await Swal.fire({
+                title: 'টাস্ক প্রুফ জমা দিন',
+                html: `
+                    <p style="font-size:12px;color:#94a3b8;margin-bottom:8px;text-align:left;">টাস্ক: <strong>${job.title || ''}</strong></p>
+                    <textarea id="tp-text" class="swal2-textarea" placeholder="কাজ সম্পন্ন করার বিবরণ লিখুন (যেমনঃ ইউজারনেম, আইডি ইত্যাদি)"></textarea>
+                    <input id="tp-file" type="file" accept="image/*" class="swal2-file">
+                    <p style="font-size:11px;color:#64748b;margin-top:4px;text-align:left;">প্রমাণ হিসেবে একটি স্ক্রিনশট আপলোড করুন (imgbb.com এ আপলোড হবে)</p>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'জমা দিন',
+                cancelButtonText: 'বাতিল',
+                preConfirm: () => {
+                    const text = document.querySelector('#tp-text').value.trim();
+                    const file = document.querySelector('#tp-file').files[0];
+                    if (!text) { Swal.showValidationMessage('বিবরণ লিখুন'); return false; }
+                    if (!file) { Swal.showValidationMessage('স্ক্রিনশট আপলোড করুন'); return false; }
+                    if (file.size > 32 * 1024 * 1024) { Swal.showValidationMessage('ছবির সাইজ ৩২ MB এর কম হতে হবে'); return false; }
+                    return { text, file };
+                }
+            });
+
+            if (!formValues) return;
+
+            Swal.fire({ title: 'স্ক্রিনশট আপলোড হচ্ছে...', text: 'অনুগ্রহ করে অপেক্ষা করুন', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const proofImageUrl = await uploadImageToImgbb(formValues.file);
+
+                await addDoc(collection(db, "job_proofs"), {
+                    userId: currentUser.uid,
+                    userName: currentUserDoc?.fullName || 'User',
+                    jobId: jobId,
+                    taskName: job.title || '',
+                    proofText: formValues.text,
+                    proofImageUrl: proofImageUrl,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+
+                Swal.close();
+                Swal.fire('সফল!', 'আপনার প্রুফ জমা হয়েছে। এডমিন যাচাই করার পর টাকা যোগ হবে।', 'success');
+            } catch (err) {
+                Swal.close();
+                Swal.fire('ত্রুটি!', err.message, 'error');
+            }
+        };
 
         function listenToLeaderboard() {
             const container = document.querySelector('#leaderboard-list-container');
