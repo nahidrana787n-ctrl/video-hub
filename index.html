@@ -976,6 +976,22 @@
         let spinPrizes = [2, 3, 5, 7, 9, 10, 12, 16, 20, 0, 9, 0, 0, 0, 0, 6, 3, 2, 8];
         let spinDailyLimit = 5;
 
+        // ---------- LIVE ADMIN-CONFIGURED DATA (Spin / Quiz / Survey) ----------
+        // Spin wheel settings, saved by admin at app_settings/spin_config (public read, no login needed)
+        onSnapshot(doc(db, "app_settings", "spin_config"), (snap) => {
+            if (!snap.exists()) return;
+            const d = snap.data();
+            if (Array.isArray(d.prizes) && d.prizes.length >= 2) {
+                spinPrizes = d.prizes;
+            }
+            if (d.dailyLimit) {
+                spinDailyLimit = parseInt(d.dailyLimit, 10) || spinDailyLimit;
+            }
+            const todayStr = new Date().toISOString().split('T')[0];
+            const spinsToday = currentUserDoc?.lastSpinDate === todayStr ? (currentUserDoc?.spinCountToday || 0) : 0;
+            updateSpinLimitUI(spinsToday);
+        }, (err) => console.warn('spin_config load error:', err.message));
+
         // LUCKY SPIN
         window.executeLuckySpin = async function() {
             if(!currentUser) return Swal.fire('ত্রুটি!', 'লগইন করুন', 'error');
@@ -1425,6 +1441,21 @@
                 document.querySelector('#header-user-card').classList.remove('hidden');
                 document.querySelector('#app-header').classList.remove('hidden');
                 document.querySelector('#app-bottom-nav').classList.remove('hidden');
+
+                // Quiz questions, saved by admin in the "quizzes" collection
+                onSnapshot(query(collection(db, "quizzes"), where("status", "==", "active")), (snap) => {
+                    quizBank = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    const quizView = document.querySelector('#view-quiz');
+                    if (quizView && !quizView.classList.contains('hidden')) {
+                        loadNewQuizQuestion();
+                    }
+                }, (err) => console.warn('quizzes load error:', err.message));
+
+                // Survey list, saved by admin in the "surveys" collection
+                onSnapshot(query(collection(db, "surveys"), where("status", "==", "active")), (snap) => {
+                    surveyBank = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderSurveyList();
+                }, (err) => console.warn('surveys load error:', err.message));
 
                 const currHash = window.location.hash;
                 if (!currHash || currHash === '#login' || currHash === '#register') {
