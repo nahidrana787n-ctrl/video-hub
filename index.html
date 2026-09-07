@@ -698,10 +698,7 @@
                 <!-- Spin Wheel Container -->
                 <div class="relative w-64 h-64 mx-auto my-4 flex items-center justify-center">
                     <div id="spin-wheel-circle" class="absolute inset-0 rounded-full border-4 border-cyan-400 bg-gradient-to-tr from-indigo-950 via-purple-900 to-cyan-900 shadow-2xl flex items-center justify-center spin-wheel">
-                        <div class="absolute top-2 text-white font-bold text-xs">৳20</div>
-                        <div class="absolute right-3 text-white font-bold text-xs">৳2</div>
-                        <div class="absolute bottom-2 text-white font-bold text-xs">৳10</div>
-                        <div class="absolute left-3 text-white font-bold text-xs">৳5</div>
+                        <div id="spin-wheel-labels" class="absolute inset-0"></div>
                         <div class="absolute inset-8 rounded-full border border-white/30 flex items-center justify-center bg-slate-950/60">
                             <i class="fa-solid fa-coins text-amber-300 text-2xl"></i>
                         </div>
@@ -976,6 +973,36 @@
         let spinPrizes = [2, 3, 5, 7, 9, 10, 12, 16, 20, 0, 9, 0, 0, 0, 0, 6, 3, 2, 8];
         let spinDailyLimit = 5;
 
+        // Draws the prize labels + segment shading on the spin wheel to match the current spinPrizes array
+        function renderSpinWheelVisual(prizes) {
+            const labelsWrap = document.querySelector('#spin-wheel-labels');
+            const wheel = document.querySelector('#spin-wheel-circle');
+            if (!labelsWrap || !wheel || !Array.isArray(prizes) || prizes.length === 0) return;
+
+            const n = prizes.length;
+            const segDeg = 360 / n;
+
+            // Alternating segment shading so the sections are visually distinguishable
+            const stops = [];
+            for (let i = 0; i < n; i++) {
+                const color = i % 2 === 0 ? 'rgba(34,211,238,0.14)' : 'rgba(129,140,248,0.14)';
+                stops.push(`${color} ${i * segDeg}deg ${(i + 1) * segDeg}deg`);
+            }
+            wheel.style.backgroundImage = `conic-gradient(${stops.join(', ')})`;
+
+            // Prize amount labels placed evenly around the circle
+            const center = 128; // wheel is w-64/h-64 = 256px, so center at 128px
+            const radius = 100;
+            labelsWrap.innerHTML = prizes.map((amount, i) => {
+                const angleDeg = (i * segDeg) + (segDeg / 2) - 90;
+                const angleRad = angleDeg * Math.PI / 180;
+                const x = center + radius * Math.cos(angleRad);
+                const y = center + radius * Math.sin(angleRad);
+                return `<span class="absolute text-white font-bold text-[10px] font-en" style="left:${x}px; top:${y}px; transform:translate(-50%,-50%);">৳${amount}</span>`;
+            }).join('');
+        }
+        renderSpinWheelVisual(spinPrizes);
+
         // ---------- LIVE ADMIN-CONFIGURED DATA (Spin / Quiz / Survey) ----------
         // Spin wheel settings, saved by admin at app_settings/spin_config (public read, no login needed)
         onSnapshot(doc(db, "app_settings", "spin_config"), (snap) => {
@@ -983,6 +1010,7 @@
             const d = snap.data();
             if (Array.isArray(d.prizes) && d.prizes.length >= 2) {
                 spinPrizes = d.prizes;
+                renderSpinWheelVisual(spinPrizes);
             }
             if (d.dailyLimit) {
                 spinDailyLimit = parseInt(d.dailyLimit, 10) || spinDailyLimit;
