@@ -1581,6 +1581,48 @@
             });
         }
 
+        function tsToMillis(ts) {
+            try { return ts?.toDate ? ts.toDate().getTime() : (ts ? new Date(ts).getTime() : 0); } catch { return 0; }
+        }
+        function tsToDateStr(ts) {
+            try { return ts?.toDate ? ts.toDate().toLocaleString('bn-BD') : ''; } catch { return ''; }
+        }
+
+        function listenToInboxNotices() {
+            if (!currentUser) return;
+            const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"), limit(50));
+            onSnapshot(q, (snap) => {
+                const myNotices = snap.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .filter(n => n.target === 'all' || n.target === currentUser.uid);
+
+                const container = document.querySelector('#inbox-messages-container');
+                if (container) {
+                    if (myNotices.length === 0) {
+                        container.innerHTML = `<div class="glass-card p-6 rounded-2xl text-center text-slate-400 text-sm">কোনো নোটিফিকেশন নেই</div>`;
+                    } else {
+                        container.innerHTML = myNotices.map(n => `
+                            <div class="glass-card p-4 rounded-2xl border border-white/10 space-y-1">
+                                <p class="font-bold text-white text-sm">📩 ${esc(n.title)}</p>
+                                <p class="text-slate-300 text-xs leading-relaxed break-words">${esc(n.body)}</p>
+                                <p class="text-slate-500 text-[10px] font-en">${tsToDateStr(n.createdAt)}</p>
+                            </div>
+                        `).join('');
+                    }
+                }
+
+                const lastSeen = Number(localStorage.getItem('inbox_last_seen') || 0);
+                const unreadCount = myNotices.filter(n => tsToMillis(n.createdAt) > lastSeen).length;
+                const badge = document.querySelector('#inbox-badge-count');
+                const redLight = document.querySelector('#inbox-red-light');
+                if (badge) badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+                if (redLight) {
+                    if (unreadCount > 0 && location.hash !== '#inbox') redLight.classList.remove('hidden');
+                    else redLight.classList.add('hidden');
+                }
+            });
+        }
+
         function updateUIWithUserData(data) {
             if(!data) return;
 
