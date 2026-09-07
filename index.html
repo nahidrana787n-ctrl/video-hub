@@ -973,6 +973,8 @@
 
         let currentUser = null;
         let currentUserDoc = null;
+        let spinPrizes = [2, 3, 5, 7, 9, 10, 12, 16, 20, 0, 9, 0, 0, 0, 0, 6, 3, 2, 8];
+        let spinDailyLimit = 5;
 
         // LUCKY SPIN
         window.executeLuckySpin = async function() {
@@ -981,18 +983,21 @@
             const todayStr = new Date().toISOString().split('T')[0];
             const spinsToday = currentUserDoc?.lastSpinDate === todayStr ? (currentUserDoc?.spinCountToday || 0) : 0;
 
-            if (spinsToday >= 5) {
-                return Swal.fire('দৈনিক লিমিট শেষ! 🛑', 'আজকে আপনার নির্ধারিত ৫টি স্পিন সম্পন্ন হয়েছে। আগামীকাল আবার চেষ্টা করুন।', 'warning');
+            if (spinsToday >= spinDailyLimit) {
+                return Swal.fire('দৈনিক লিমিট শেষ! 🛑', `আজকে আপনার নির্ধারিত ${spinDailyLimit}টি স্পিন সম্পন্ন হয়েছে। আগামীকাল আবার চেষ্টা করুন।`, 'warning');
+            }
+
+            if (!spinPrizes || spinPrizes.length === 0) {
+                return Swal.fire('একটু অপেক্ষা করুন', 'স্পিন হুইল লোড হচ্ছে, আবার চেষ্টা করুন।', 'info');
             }
 
             const wheel = document.querySelector('#spin-wheel-circle');
             const btn = document.querySelector('#btn-spin-now');
             btn.disabled = true;
 
-            const exactPrizes = [2, 3, 5, 7, 9, 10, 12, 16, 20, 0, 9, 0, 0, 0, 0, 6, 3, 2, 8];
-            const randomPrizeIndex = Math.floor(Math.random() * exactPrizes.length);
-            const wonAmount = exactPrizes[randomPrizeIndex];
-            const degrees = 1440 + (randomPrizeIndex * (360 / exactPrizes.length));
+            const randomPrizeIndex = Math.floor(Math.random() * spinPrizes.length);
+            const wonAmount = spinPrizes[randomPrizeIndex];
+            const degrees = 1440 + (randomPrizeIndex * (360 / spinPrizes.length));
 
             wheel.style.transform = `rotate(${degrees}deg)`;
 
@@ -1027,33 +1032,27 @@
         };
 
         function updateSpinLimitUI(countDone) {
-            const remaining = Math.max(0, 5 - (countDone !== undefined ? countDone : 0));
+            const remaining = Math.max(0, spinDailyLimit - (countDone !== undefined ? countDone : 0));
             const limitEl = document.querySelector('#spin-limit-counter');
-            if (limitEl) limitEl.textContent = `${remaining}/৫`;
+            if (limitEl) limitEl.textContent = `${remaining}/${spinDailyLimit}`;
         }
 
         // QUIZ
-        const quizBank = [
-            { q: "বাংলাদেশের রাজধানীর নাম কী?", options: ["ঢাকা", "চট্টগ্রাম", "খুলনা", "রাজশাহী"], correct: 0 },
-            { q: "পৃথিবীর সবচেয়ে বড় মহাসাগর কোনটি?", options: ["আটলান্টিক", "ভারত মহাসাগর", "প্রশান্ত মহাসাগর", "আর্কটিক"], correct: 2 },
-            { q: "১ ডজনে কতটি জিনিস থাকে?", options: ["১০", "১২", "১৫", "২০"], correct: 1 },
-            { q: "বাংলাদেশের জাতীয় ফুল কোনটি?", options: ["গোলাপ", "রজনীগন্ধা", "শাপলা", "সূর্যমুখী"], correct: 2 },
-            { q: "সূর্য পৃথিবী থেকে কোন দিকে ওঠে?", options: ["পশ্চিমে", "পূর্বে", "উত্তরে", "দক্ষিণে"], correct: 1 },
-            { q: "১ ঘণ্টায় কত মিনিট?", options: ["৩০", "৪৫", "৬০", "৯০"], correct: 2 },
-            { q: "বাংলাদেশের মুদ্রার নাম কী?", options: ["রুপি", "টাকা", "ডলার", "দিনার"], correct: 1 },
-            { q: "পানির রাসায়নিক সংকেত কোনটি?", options: ["CO2", "O2", "H2O", "NaCl"], correct: 2 },
-            { q: "বছরে কতটি মাস থাকে?", options: ["১০", "১১", "১২", "১৩"], correct: 2 },
-            { q: "বাংলাদেশের সবচেয়ে বড় নদী কোনটি?", options: ["পদ্মা", "মেঘনা", "যমুনা", "কর্ণফুলী"], correct: 1 }
-        ];
+        let quizBank = [];
         let currentQuizIndex = -1;
 
         function loadNewQuizQuestion() {
+            const qEl = document.querySelector('#quiz-question-text');
+            const container = document.querySelector('#quiz-options-container');
+            if (!quizBank || quizBank.length === 0) {
+                if (qEl) qEl.textContent = 'এই মুহূর্তে কোনো কুইজ প্রশ্ন যোগ করা হয়নি। পরে আবার চেষ্টা করুন।';
+                if (container) container.innerHTML = '';
+                return;
+            }
             const idx = Math.floor(Math.random() * quizBank.length);
             currentQuizIndex = idx;
             const item = quizBank[idx];
-            const qEl = document.querySelector('#quiz-question-text');
-            if (qEl) qEl.textContent = item.q;
-            const container = document.querySelector('#quiz-options-container');
+            if (qEl) qEl.textContent = item.question;
             if (!container) return;
             container.innerHTML = item.options.map((opt, i) => `
                 <button onclick="answerQuiz(${i})" class="w-full text-left p-3 rounded-xl border border-white/20 text-xs font-bold text-slate-100 bg-slate-900 hover:border-violet-400 transition">${opt}</button>
@@ -1062,6 +1061,7 @@
 
         window.answerQuiz = async function(selectedIdx) {
             if (!currentUser) return Swal.fire('ত্রুটি!', 'লগইন করুন', 'error');
+            if (currentQuizIndex < 0 || !quizBank[currentQuizIndex]) return;
 
             const todayStr = new Date().toISOString().split('T')[0];
             const doneToday = currentUserDoc?.lastQuizDate === todayStr ? (currentUserDoc?.quizCountToday || 0) : 0;
@@ -1071,8 +1071,8 @@
             }
 
             const item = quizBank[currentQuizIndex];
-            const isCorrect = selectedIdx === item.correct;
-            const reward = isCorrect ? (Math.floor(Math.random() * 4) + 2) : 0;
+            const isCorrect = selectedIdx === item.correctIndex;
+            const reward = isCorrect ? (Number(item.reward) || 0) : 0;
 
             try {
                 let updateData = {
@@ -1091,7 +1091,7 @@
                 if (isCorrect) {
                     Swal.fire('সঠিক উত্তর! 🎉', `অভিনন্দন! আপনি জিতেছেন ৳${reward} টাকা!`, 'success');
                 } else {
-                    Swal.fire('দুঃখিত! ❌', `উত্তরটি সঠিক ছিল না। সঠিক উত্তর: ${item.options[item.correct]}`, 'info');
+                    Swal.fire('দুঃখিত! ❌', `উত্তরটি সঠিক ছিল না। সঠিক উত্তর: ${item.options[item.correctIndex]}`, 'info');
                 }
 
                 updateQuizLimitUI(doneToday + 1);
@@ -1108,25 +1108,18 @@
         }
 
         // SURVEY
-        const surveyBank = [
-            { id: 's1', title: 'পণ্য ব্যবহারের অভিজ্ঞতা জরিপ', reward: [8, 15], questions: [
-                { q: 'আপনি কতদিন ধরে এই ধরনের পণ্য ব্যবহার করছেন?', options: ['১ মাসের কম', '১-৬ মাস', '৬ মাসের বেশি'] },
-                { q: 'আপনি কি বন্ধুদের কাছে এটি সুপারিশ করবেন?', options: ['হ্যাঁ, অবশ্যই', 'সম্ভবত', 'না'] }
-            ]},
-            { id: 's2', title: 'মোবাইল ইন্টারনেট ব্যবহার জরিপ', reward: [6, 12], questions: [
-                { q: 'দৈনিক গড়ে কত ঘণ্টা ইন্টারনেট ব্যবহার করেন?', options: ['১ ঘণ্টার কম', '১-৩ ঘণ্টা', '৩ ঘণ্টার বেশি'] },
-                { q: 'আপনার প্রধান ইন্টারনেট প্যাকেজ কোনটি?', options: ['ডেইলি', 'উইকলি', 'মান্থলি'] }
-            ]},
-            { id: 's3', title: 'অনলাইন শপিং অভিজ্ঞতা জরিপ', reward: [10, 18], questions: [
-                { q: 'মাসে কতবার অনলাইনে কেনাকাটা করেন?', options: ['০-১ বার', '২-৪ বার', '৫+ বার'] },
-                { q: 'পেমেন্টের জন্য কোনটি বেশি পছন্দ করেন?', options: ['ক্যাশ অন ডেলিভারি', 'মোবাইল ব্যাংকিং', 'কার্ড পেমেন্ট'] }
-            ]}
-        ];
+        let surveyBank = [];
         let activeSurveyId = null;
 
         function renderSurveyList() {
             const container = document.querySelector('#survey-list-container');
             if (!container) return;
+
+            if (!surveyBank || surveyBank.length === 0) {
+                container.innerHTML = `<div class="glass-card p-4 rounded-2xl border border-white/20 text-center text-xs text-slate-300">এই মুহূর্তে কোনো সার্ভে যোগ করা হয়নি। পরে আবার চেষ্টা করুন।</div>`;
+                updateSurveyLimitUI(0);
+                return;
+            }
 
             const todayStr = new Date().toISOString().split('T')[0];
             const isToday = currentUserDoc?.lastSurveyDate === todayStr;
@@ -1144,7 +1137,7 @@
                 <div class="glass-card p-4 rounded-2xl border ${isDone ? 'border-emerald-400/40 opacity-60' : 'border-white/20'} flex items-center justify-between gap-3">
                     <div class="text-left">
                         <p class="text-xs font-bold text-white">${s.title}</p>
-                        <p class="text-[10px] text-lime-300 font-en">রিওয়ার্ড: ৳${s.reward[0]} - ৳${s.reward[1]}</p>
+                        <p class="text-[10px] text-lime-300 font-en">রিওয়ার্ড: ৳${s.rewardMin} - ৳${s.rewardMax}</p>
                     </div>
                     <button ${disabled ? 'disabled' : ''} onclick="openSurvey('${s.id}')" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase whitespace-nowrap ${isDone ? 'bg-emerald-500/20 text-emerald-300' : 'bg-gradient-to-r from-lime-400 to-emerald-500 text-slate-950'} ${limitReached && !isDone ? 'opacity-40 cursor-not-allowed' : ''}">
                         ${btnLabel}
@@ -1199,7 +1192,9 @@
             }
 
             const completedIds = isToday ? (currentUserDoc?.completedSurveyIds || []) : [];
-            const reward = Math.floor(Math.random() * (survey.reward[1] - survey.reward[0] + 1)) + survey.reward[0];
+            const minR = Number(survey.rewardMin) || 0;
+            const maxR = Number(survey.rewardMax) || minR;
+            const reward = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
 
             try {
                 await updateDoc(doc(db, "users", currentUser.uid), {
