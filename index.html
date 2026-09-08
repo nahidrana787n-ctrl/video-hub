@@ -2625,14 +2625,15 @@
         };
 
         // ==== ACCOUNT VERIFICATION PAYMENT CONFIG (এডমিন প্যানেল থেকে নিয়ন্ত্রিত, Firestore settings/general) ====
+        // আগে এটি শুধু একবার (getDoc) লোড হতো, তাই এডমিন সেটিংস পরিবর্তন করলে যাদের ট্যাব আগে থেকে খোলা
+        // ছিল তাদের কাছে রিফ্রেশ ছাড়া নতুন নম্বর দেখাতো না। এখন onSnapshot দিয়ে রিয়েল-টাইমে সিঙ্ক হয়।
         let VERIFY_BKASH_NUMBER = '01700-000000';
         let VERIFY_NAGAD_NUMBER = '01800-000000';
         let VERIFY_FEE_AMOUNT = 15;
         let MIN_WITHDRAW_AMOUNT = 100;
 
-        async function loadSiteSettings() {
-            try {
-                const snap = await getDoc(doc(db, "settings", "general"));
+        function loadSiteSettings() {
+            onSnapshot(doc(db, "settings", "general"), (snap) => {
                 if (snap.exists()) {
                     const s = snap.data();
                     if (s.bkashNumber) VERIFY_BKASH_NUMBER = s.bkashNumber;
@@ -2640,26 +2641,30 @@
                     if (typeof s.verifyFeeAmount === 'number') VERIFY_FEE_AMOUNT = s.verifyFeeAmount;
                     if (typeof s.minWithdrawAmount === 'number') MIN_WITHDRAW_AMOUNT = s.minWithdrawAmount;
                 }
-            } catch (err) {
-                console.warn("Settings load warning:", err);
-            }
 
-            const bkashEl = document.querySelector('#verify-bkash-number');
-            const nagadEl = document.querySelector('#verify-nagad-number');
-            const selectedEl = document.querySelector('#verify-selected-number');
-            const feeEls = document.querySelectorAll('.verify-fee-amount-display');
-            const minWithdrawInput = document.querySelector('#withdraw-amount');
+                const bkashEl = document.querySelector('#verify-bkash-number');
+                const nagadEl = document.querySelector('#verify-nagad-number');
+                const feeEls = document.querySelectorAll('.verify-fee-amount-display');
+                const minWithdrawInput = document.querySelector('#withdraw-amount');
 
-            if (bkashEl) bkashEl.textContent = VERIFY_BKASH_NUMBER;
-            if (nagadEl) nagadEl.textContent = VERIFY_NAGAD_NUMBER;
-            if (selectedEl) selectedEl.textContent = VERIFY_BKASH_NUMBER;
-            feeEls.forEach(el => el.textContent = `৳${VERIFY_FEE_AMOUNT}`);
-            if (minWithdrawInput) {
-                minWithdrawInput.setAttribute('min', MIN_WITHDRAW_AMOUNT);
-                minWithdrawInput.setAttribute('placeholder', `সর্বনিম্ন ৳${MIN_WITHDRAW_AMOUNT}`);
-            }
-            const minNoteEl = document.querySelector('#wd-min-note');
-            if (minNoteEl) minNoteEl.textContent = MIN_WITHDRAW_AMOUNT;
+                if (bkashEl) bkashEl.textContent = VERIFY_BKASH_NUMBER;
+                if (nagadEl) nagadEl.textContent = VERIFY_NAGAD_NUMBER;
+                feeEls.forEach(el => el.textContent = `৳${VERIFY_FEE_AMOUNT}`);
+                if (minWithdrawInput) {
+                    minWithdrawInput.setAttribute('min', MIN_WITHDRAW_AMOUNT);
+                    minWithdrawInput.setAttribute('placeholder', `সর্বনিম্ন ৳${MIN_WITHDRAW_AMOUNT}`);
+                }
+                const minNoteEl = document.querySelector('#wd-min-note');
+                if (minNoteEl) minNoteEl.textContent = MIN_WITHDRAW_AMOUNT;
+
+                // ভেরিফাই-অ্যাকাউন্ট পেজ খোলা থাকলে সিলেক্টেড নম্বর রিফ্রেশ করা
+                if (typeof window.updateVerifyPayNumber === 'function') window.updateVerifyPayNumber();
+
+                // Promote পেজ খোলা থাকলে এবং বিকাশ/নগদ সিলেক্ট করা থাকলে নম্বরটা লাইভ রিফ্রেশ করা
+                if (typeof window.setPromotePayMethod === 'function' && promotePayMethod !== 'balance') {
+                    window.setPromotePayMethod(promotePayMethod);
+                }
+            }, (err) => console.warn("Settings load warning:", err));
         }
         loadSiteSettings();
 
