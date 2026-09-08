@@ -807,9 +807,19 @@
                     <input type="text" id="promote-trx-id" placeholder="ট্রানজেকশন আইডি (TrxID)" class="w-full p-3 rounded-xl bg-slate-950 border border-white/15 text-white text-sm outline-none focus:border-cyan-400">
                 </div>
 
-                <button onclick="window.submitPromoteRequest()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-bullhorn"></i> Promote Now
+                <button onclick="window.submitPromoteRequest()" class="w-full py-3.5 rounded-2xl bg-amber-400 hover:bg-amber-300 active:scale-95 transition text-slate-900 font-black text-sm shadow-lg shadow-amber-500/30 border border-amber-300 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-sack-dollar"></i> Promote Now
                 </button>
+            </div>
+
+            <!-- MY PROMOTE HISTORY -->
+            <div class="glass-card p-5 rounded-3xl border border-white/20 shadow-xl space-y-3">
+                <h3 class="font-bold text-white text-sm flex items-center gap-2 border-b border-white/10 pb-2">
+                    <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> আপনার প্রমোট হিস্টোরি
+                </h3>
+                <div id="promote-history-list-container" class="space-y-2">
+                    <p class="text-[11px] text-slate-400 text-center py-3">লোড হচ্ছে...</p>
+                </div>
             </div>
         </section>
 
@@ -1777,6 +1787,7 @@
             if (cleanHash === '#promote-request') {
                 window.updatePromoteAmount();
                 window.setPromotePayMethod(promotePayMethod);
+                listenToMyPromoteHistory();
             }
             if (cleanHash === '#income-tasks') {
                 listenToIncomeTasks();
@@ -2335,6 +2346,79 @@
             }
         };
 
+        // ---------- MY PROMOTE HISTORY (own submitted promote requests + live progress) ----------
+        let myPromoteHistoryListenerReady = false;
+        let myPromoteRequests = [];
+        let myPromoteJobsByReqId = {};
+
+        function listenToMyPromoteHistory() {
+            if (!currentUser) return;
+            const container = document.querySelector('#promote-history-list-container');
+            if (!container) return;
+            if (myPromoteHistoryListenerReady) { renderPromoteHistoryUI(); return; }
+            myPromoteHistoryListenerReady = true;
+
+            onSnapshot(query(collection(db, "promote_requests"), where("userId", "==", currentUser.uid)), (snapshot) => {
+                myPromoteRequests = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                myPromoteRequests.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                renderPromoteHistoryUI();
+            });
+
+            onSnapshot(query(collection(db, "jobs"), where("ownerUserId", "==", currentUser.uid), where("type", "==", "promote")), (snapshot) => {
+                myPromoteJobsByReqId = {};
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
+                    if (data.requestId) myPromoteJobsByReqId[data.requestId] = { id: d.id, ...data };
+                });
+                renderPromoteHistoryUI();
+            });
+        }
+
+        function renderPromoteHistoryUI() {
+            const container = document.querySelector('#promote-history-list-container');
+            if (!container) return;
+
+            if (!myPromoteRequests.length) {
+                container.innerHTML = '<p class="text-[11px] text-slate-400 text-center py-3">এখনো কোনো প্রমোট রিকোয়েস্ট করেননি।</p>';
+                return;
+            }
+
+            container.innerHTML = myPromoteRequests.map(req => {
+                const linkLabel = req.linkType === 'telegram' ? 'টেলিগ্রাম চ্যানেল' : 'ওয়েবসাইট';
+                let statusBadge = '';
+                let progressLine = '';
+
+                if (req.status === 'pending') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase whitespace-nowrap">অপেক্ষমান</span>`;
+                } else if (req.status === 'approved') {
+                    const job = myPromoteJobsByReqId[req.id];
+                    if (job) {
+                        const doneCount = job.completedCount || 0;
+                        const needCount = job.usersNeeded || req.usersNeeded || 0;
+                        progressLine = `<p class="text-[10px] text-slate-400 mt-1">${doneCount}/${needCount} জন সম্পন্ন করেছে</p>`;
+                        statusBadge = job.status === 'active'
+                            ? `<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase whitespace-nowrap">চলমান</span>`
+                            : `<span class="px-2.5 py-1 rounded-full bg-slate-500/20 text-slate-300 text-[10px] font-bold uppercase whitespace-nowrap">বন্ধ</span>`;
+                    } else {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase whitespace-nowrap">অ্যাপ্রুভড</span>`;
+                    }
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-bold uppercase whitespace-nowrap">${req.status || ''}</span>`;
+                }
+
+                return `
+                <div class="bg-slate-950/60 border border-white/10 rounded-xl p-3 space-y-1">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[10px] font-bold text-cyan-300 uppercase">${linkLabel}</span>
+                        ${statusBadge}
+                    </div>
+                    <p class="text-xs text-white break-all">${req.link || ''}</p>
+                    <p class="text-[10px] text-slate-400">৳${(Number(req.amount) || 0).toFixed(2)} • প্রয়োজন: ${req.usersNeeded || 0} জন</p>
+                    ${progressLine}
+                </div>`;
+            }).join('');
+        }
+
         // ---------- INCOME TASKS (approved promote jobs) ----------
         let incomeTasksListenerReady = false;
         let allIncomeTasks = [];
@@ -2357,19 +2441,20 @@
             const container = document.querySelector('#income-task-list-container');
             if (!container) return;
 
-            const visibleTasks = allIncomeTasks.filter(job => job.ownerUserId !== currentUser?.uid);
-
-            if (!visibleTasks.length) {
+            if (!allIncomeTasks.length) {
                 container.innerHTML = '<div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">এই মুহূর্তে কোনো প্রমোট টাস্ক নেই। পরে আবার চেক করুন।</div>';
                 return;
             }
 
-            container.innerHTML = visibleTasks.map(job => {
+            container.innerHTML = allIncomeTasks.map(job => {
+                const isOwner = job.ownerUserId === currentUser?.uid;
                 const status = myTaskProofsMap[job.id];
                 const doneCount = job.completedCount || 0;
                 const needCount = job.usersNeeded || 0;
                 let actionHtml = '';
-                if (status === 'approved') {
+                if (isOwner) {
+                    actionHtml = `<span class="px-3 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-user-check"></i> এটি আপনার নিজের প্রমোট</span>`;
+                } else if (status === 'approved') {
                     actionHtml = `<span class="px-3 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> সম্পন্ন ও পেমেন্ট হয়েছে</span>`;
                 } else if (status === 'pending') {
                     actionHtml = `<span class="px-3 py-2 rounded-xl bg-amber-500/20 text-amber-300 text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> যাচাই হচ্ছে...</span>`;
@@ -2475,15 +2560,21 @@
                 docsList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
                 container.innerHTML = docsList.map(w => {
-                    const isApproved = w.status === 'approved';
+                    const isApproved = w.status === 'paid' || w.status === 'approved';
                     const isRejected = w.status === 'rejected';
-                    
+
                     const dateStr = w.createdAt ? new Date(w.createdAt.seconds * 1000).toLocaleString('bn-BD', {
                         day: 'numeric', month: 'short', year: 'numeric',
                         hour: '2-digit', minute: '2-digit', hour12: true
                     }) : 'তারিখ প্রক্রিয়াধীন';
 
                     const isBkash = (w.method || '').toLowerCase() === 'bkash';
+
+                    const statusBadge = isApproved
+                        ? `<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> সম্পন্ন</span>`
+                        : isRejected
+                        ? `<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-black uppercase flex items-center gap-1"><i class="fa-solid fa-circle-xmark"></i> বাতিল</span>`
+                        : `<span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase flex items-center gap-1"><i class="fa-solid fa-clock"></i> অপেক্ষমান</span>`;
 
                     return `
                         <div class="p-4 rounded-3xl border ${isApproved ? 'bg-emerald-950/40 border-emerald-500/40' : isRejected ? 'bg-rose-950/40 border-rose-500/40' : 'bg-slate-950 border-white/10'} space-y-3 shadow-xl">
@@ -2496,7 +2587,7 @@
                             </div>
                             <div class="text-[10px] text-cyan-200 flex justify-between items-center font-medium border-t border-white/10 pt-2">
                                 <span><i class="fa-regular fa-calendar-check mr-1"></i> ${dateStr}</span>
-                                <span class="uppercase font-bold">${w.status}</span>
+                                ${statusBadge}
                             </div>
                         </div>
                     `;
