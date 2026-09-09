@@ -526,24 +526,10 @@
             </div>
             </div>
 
-            <!-- খালি জায়গা, তারপর অ্যাডস (শুধু হোম পেজে) — শুধু ১টা ব্যানার দেখাবে, বাকি অ্যাড নেটওয়ার্ক স্ক্রিপ্ট আগের মতোই সচল থাকবে -->
+            <!-- খালি জায়গা, তারপর অ্যাডস (শুধু হোম পেজে, লগইন করা অবস্থায়) — লগইন/রেজিস্টার পেজে এই স্ক্রিপ্ট একদম লোডই হবে না -->
             <div style="height:40px;"></div>
             <p class="text-center text-[11px] text-slate-500 font-bold tracking-wide uppercase">বিজ্ঞাপন (Advertisement)</p>
-            <div class="flex flex-col items-center gap-4 pb-4">
-                <div style="width:320px;max-width:100%;height:50px;overflow:hidden;">
-                    <script type="text/javascript">
-                        atOptions = { 'key' : '56c7c4605253cbf05b152ae6b372e3b1', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
-                    </script>
-                    <script type="text/javascript" src="https://www.highrevenueformat.com/56c7c4605253cbf05b152ae6b372e3b1/invoke.js"></script>
-                </div>
-
-                <script type="text/javascript" src="https://pl30849666.profitableratecpmnetwork.com/f1/b4/ac/f1b4ac12e4f79e98cd01bf0fa91efa78.js"></script>
-
-                <div style="width:100%;max-width:728px;overflow:hidden;">
-                    <script async="async" data-cfasync="false" src="https://pl30849667.profitableratecpmnetwork.com/b3286ecc9b05cbf04fd0b0d93b1f8ecc/invoke.js"></script>
-                    <div id="container-b3286ecc9b05cbf04fd0b0d93b1f8ecc" style="max-height:430px;overflow:hidden;"></div>
-                </div>
-            </div>
+            <div id="home-ads-container" class="flex flex-col items-center gap-4 pb-4"></div>
         </section>
 
         <!-- INCOME HISTORY VIEW -->
@@ -1729,6 +1715,47 @@
         }
         renderProjects();
 
+        let homeAdsLoaded = false;
+        function loadHomeAds() {
+            if (homeAdsLoaded) return; // একবারই লোড হবে, বারবার না
+            const container = document.querySelector('#home-ads-container');
+            if (!container) return;
+            homeAdsLoaded = true;
+
+            // ব্যানার অ্যাড (320x50)
+            const bannerWrap = document.createElement('div');
+            bannerWrap.style.cssText = 'width:320px;max-width:100%;height:50px;overflow:hidden;';
+            const bannerConfig = document.createElement('script');
+            bannerConfig.type = 'text/javascript';
+            bannerConfig.text = "atOptions = { 'key' : '56c7c4605253cbf05b152ae6b372e3b1', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };";
+            const bannerScript = document.createElement('script');
+            bannerScript.type = 'text/javascript';
+            bannerScript.src = 'https://www.highrevenueformat.com/56c7c4605253cbf05b152ae6b372e3b1/invoke.js';
+            bannerWrap.appendChild(bannerConfig);
+            bannerWrap.appendChild(bannerScript);
+            container.appendChild(bannerWrap);
+
+            // পপআন্ডার/পুশ স্টাইল স্ক্রিপ্ট
+            const popScript = document.createElement('script');
+            popScript.type = 'text/javascript';
+            popScript.src = 'https://pl30849666.profitableratecpmnetwork.com/f1/b4/ac/f1b4ac12e4f79e98cd01bf0fa91efa78.js';
+            container.appendChild(popScript);
+
+            // নেটিভ অ্যাড ফিড (১টা ক্রিয়েটিভ পর্যন্ত visible)
+            const nativeWrap = document.createElement('div');
+            nativeWrap.style.cssText = 'width:100%;max-width:728px;overflow:hidden;';
+            const nativeScript = document.createElement('script');
+            nativeScript.async = true;
+            nativeScript.setAttribute('data-cfasync', 'false');
+            nativeScript.src = 'https://pl30849667.profitableratecpmnetwork.com/b3286ecc9b05cbf04fd0b0d93b1f8ecc/invoke.js';
+            const nativeContainer = document.createElement('div');
+            nativeContainer.id = 'container-b3286ecc9b05cbf04fd0b0d93b1f8ecc';
+            nativeContainer.style.cssText = 'max-height:430px;overflow:hidden;';
+            nativeWrap.appendChild(nativeScript);
+            nativeWrap.appendChild(nativeContainer);
+            container.appendChild(nativeWrap);
+        }
+
         function handleRouting() {
             const rawHash = window.location.hash || '#dashboard';
             // Clean hash by stripping query parameters like ?ref=XYZ if attached directly to hash
@@ -1793,6 +1820,11 @@
                 targetView.classList.remove('hidden');
             } else {
                 document.querySelector('#view-dashboard').classList.remove('hidden');
+            }
+
+            // লগইন/রেজিস্টার পেজে অ্যাড কখনো লোড হবে না — শুধু ড্যাশবোর্ড (হোম) পেজে গেলেই লোড হবে
+            if (cleanHash === '#dashboard') {
+                loadHomeAds();
             }
 
             if (cleanHash === '#quiz') {
