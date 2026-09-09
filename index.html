@@ -1183,6 +1183,27 @@
         </a>
     </nav>
 
+    <!-- REVIEW REQUEST POPUP (only verified users, once per session) -->
+    <div id="review-popup" class="hidden fixed inset-x-4 bottom-24 max-w-md mx-auto z-50">
+        <div class="glass-card border border-amber-400/30 rounded-3xl shadow-2xl p-4 relative bg-slate-900/95">
+            <button onclick="window.closeReviewPopup(true)" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+            <div class="flex items-start gap-3 pr-6">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-lg shrink-0 shadow-lg">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-white text-sm">ওয়েবসাইটটি আপনার কেমন লাগলো?</p>
+                    <p class="text-xs text-cyan-200 mt-0.5">আপনার একটি রিভিউ আমাদের জন্য অনেক গুরুত্বপূর্ণ। মাত্র কয়েক সেকেন্ড সময় নিন।</p>
+                    <button onclick="window.goToReviewFromPopup()" class="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold shadow-lg">
+                        <i class="fa-solid fa-pen"></i> রিভিউ দিন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FIREBASE SDK & APP JS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -1223,6 +1244,8 @@
         let tasksListenersReady = false;
         let allActiveTasks = [];
         let myTaskProofsMap = {};
+        let reviewPopupEnabled = true;
+        let reviewPopupTimer = null;
 
         // Draws the prize labels + segment shading on the spin wheel to match the current spinPrizes array
         const SPIN_COLORS = ["#f43f5e","#f97316","#eab308","#22c55e","#06b6d4","#3b82f6","#8b5cf6","#ec4899","#14b8a6","#84cc16"];
@@ -1608,9 +1631,49 @@
                             `).join('');
                         }
                     }
+
+                    reviewPopupEnabled = cfg.reviewPopupEnabled !== false;
+                    maybeShowReviewPopup();
                 }
             });
         }
+
+        // ---------- REVIEW REQUEST POPUP ----------
+        function maybeShowReviewPopup() {
+            if (!currentUser || !currentUserDoc) return;
+            if (currentUserDoc.accountStatus !== 'verified') return;
+            if (!reviewPopupEnabled) return;
+            if (sessionStorage.getItem('review_popup_shown')) return;
+
+            const popup = document.querySelector('#review-popup');
+            if (!popup) return;
+
+            sessionStorage.setItem('review_popup_shown', '1');
+            popup.classList.remove('hidden');
+
+            const hideDelay = 5000 + Math.floor(Math.random() * 5000); // ৫ থেকে ১০ সেকেন্ড
+            reviewPopupTimer = setTimeout(() => {
+                window.closeReviewPopup(false);
+            }, hideDelay);
+        }
+
+        window.closeReviewPopup = function(userClosed) {
+            const popup = document.querySelector('#review-popup');
+            if (popup) popup.classList.add('hidden');
+            if (reviewPopupTimer) {
+                clearTimeout(reviewPopupTimer);
+                reviewPopupTimer = null;
+            }
+        };
+
+        window.goToReviewFromPopup = function() {
+            window.closeReviewPopup(true);
+            window.location.hash = '#leaderboard';
+            setTimeout(() => {
+                document.querySelector('#open-review-form-btn')?.click();
+            }, 300);
+        };
+
 
         function checkAndRollEarningDates(data, uid) {
             if (!data || !uid) return;
@@ -3225,6 +3288,7 @@
 
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
+                sessionStorage.removeItem('review_popup_shown');
                 Swal.close();
                 Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'লগইন সফল হয়েছে!', showConfirmButton: false, timer: 1500 }).then(() => {
                     window.location.hash = '#dashboard';
