@@ -525,6 +525,38 @@
                 <div id="projects-grid-container" class="grid grid-cols-3 gap-2">
             </div>
             </div>
+
+            <!-- খালি জায়গা, তারপর অ্যাডস (শুধু হোম পেজে) -->
+            <div style="height:56px;"></div>
+            <div class="flex flex-col items-center gap-4 pb-4">
+                <div style="width:320px;max-width:100%;height:50px;overflow:hidden;">
+                    <script type="text/javascript">
+                        atOptions = { 'key' : '56c7c4605253cbf05b152ae6b372e3b1', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+                    </script>
+                    <script type="text/javascript" src="https://www.highrevenueformat.com/56c7c4605253cbf05b152ae6b372e3b1/invoke.js"></script>
+                </div>
+
+                <script type="text/javascript" src="https://pl30849666.profitableratecpmnetwork.com/f1/b4/ac/f1b4ac12e4f79e98cd01bf0fa91efa78.js"></script>
+
+                <div style="width:100%;max-width:728px;overflow:hidden;">
+                    <script async="async" data-cfasync="false" src="https://pl30849667.profitableratecpmnetwork.com/b3286ecc9b05cbf04fd0b0d93b1f8ecc/invoke.js"></script>
+                    <div id="container-b3286ecc9b05cbf04fd0b0d93b1f8ecc"></div>
+                </div>
+
+                <div style="width:728px;max-width:100%;height:90px;overflow:hidden;">
+                    <script type="text/javascript">
+                        atOptions = { 'key' : '5688cbf6f0deec393f3ce3040e261cd7', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+                    </script>
+                    <script type="text/javascript" src="https://www.highrevenueformat.com/5688cbf6f0deec393f3ce3040e261cd7/invoke.js"></script>
+                </div>
+
+                <div style="width:300px;max-width:100%;height:250px;overflow:hidden;">
+                    <script type="text/javascript">
+                        atOptions = { 'key' : '439e8cf521b5294bdc1aaec4db98e8ff', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+                    </script>
+                    <script type="text/javascript" src="https://www.highrevenueformat.com/439e8cf521b5294bdc1aaec4db98e8ff/invoke.js"></script>
+                </div>
+            </div>
         </section>
 
         <!-- INCOME HISTORY VIEW -->
@@ -1151,19 +1183,6 @@
         </a>
     </nav>
 
-    <!-- FLOATING AD BAR (Adsterra) — পেজের লেআউট নষ্ট করে না, স্ক্রিনের একদম উপরে (হেডারেরও উপরে) ভেসে থাকে,
-         শুধু নির্দিষ্ট কয়েকটা পেজে (dashboard/history/income-tasks/leaderboard) দেখানো হয় -->
-    <div id="ad-floating-bar" class="hidden fixed left-0 right-0 flex justify-center items-center pointer-events-none" style="top:0;z-index:200;">
-        <div class="pointer-events-auto shadow-2xl border-b border-white/10" style="width:320px;max-width:100%;height:50px;background:#0f172a;overflow:hidden;">
-            <div id="ad-floating-bar-slot" style="width:320px;height:50px;">
-                <script type="text/javascript">
-                    atOptions = { 'key' : '56c7c4605253cbf05b152ae6b372e3b1', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
-                </script>
-                <script type="text/javascript" src="https://www.highrevenueformat.com/56c7c4605253cbf05b152ae6b372e3b1/invoke.js"></script>
-            </div>
-        </div>
-    </div>
-
     <!-- FIREBASE SDK & APP JS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -1723,40 +1742,6 @@
         }
         renderProjects();
 
-        // ===== FLOATING AD BAR (Adsterra 320x50 Banner) =====
-        // অ্যাড কোডটা স্ট্যাটিকভাবে HTML-এই বসানো (উপরে দেখুন), তাই পেজ লোড হওয়ার সাথে সাথেই
-        // এটা লোড হয়ে যায় — এখানে শুধু কোন পেজে সেটা দেখা যাবে তা কন্ট্রোল করা হচ্ছে।
-        // এই রুটগুলোতেই শুধু ফ্লোটিং অ্যাড বার দেখানো হবে
-        const AD_FLOATING_BAR_ROUTES = ['#dashboard', '#history', '#income-tasks', '#leaderboard'];
-        function updateFloatingAdVisibility(cleanHash) {
-            const adBar = document.querySelector('#ad-floating-bar');
-            if (!adBar) return;
-            if (currentUser && AD_FLOATING_BAR_ROUTES.includes(cleanHash)) {
-                adBar.classList.remove('hidden');
-            } else {
-                adBar.classList.add('hidden');
-            }
-        }
-
-        // ===== NOTIFICATION-STYLE FLOATING AD (Adsterra) =====
-        // এই ফরম্যাটটা নিজে থেকেই স্ক্রিনের কোনো এক কোণায় ভেসে ওঠে, কিছুক্ষণ থেকে
-        // নিজে থেকেই হারিয়ে যায়, আবার কিছুক্ষণ পর নিজে থেকেই আবার দেখা যায় — এই
-        // আসা-যাওয়ার সাইকেলটা সম্পূর্ণ Adsterra-র নিজস্ব স্ক্রিপ্ট কন্ট্রোল করে, তাই
-        // এটা লগইন করার পর একবার লোড হলেই সারাক্ষণ (সব পেজেই) নিজে থেকে চলতে থাকে।
-        let notificationAdLoaded = false;
-        function loadNotificationStyleAd() {
-            if (notificationAdLoaded) return;
-            notificationAdLoaded = true;
-            const container = document.createElement('div');
-            container.id = 'container-b3286ecc9b05cbf04fd0b0d93b1f8ecc';
-            document.body.appendChild(container);
-            const s = document.createElement('script');
-            s.async = true;
-            s.setAttribute('data-cfasync', 'false');
-            s.src = 'https://pl30849667.profitableratecpmnetwork.com/b3286ecc9b05cbf04fd0b0d93b1f8ecc/invoke.js';
-            document.body.appendChild(s);
-        }
-
         function handleRouting() {
             const rawHash = window.location.hash || '#dashboard';
             // Clean hash by stripping query parameters like ?ref=XYZ if attached directly to hash
@@ -1823,8 +1808,6 @@
                 document.querySelector('#view-dashboard').classList.remove('hidden');
             }
 
-            updateFloatingAdVisibility(cleanHash);
-
             if (cleanHash === '#quiz') {
                 loadNewQuizQuestion();
             }
@@ -1857,7 +1840,6 @@
                 document.querySelector('#header-user-card').classList.remove('hidden');
                 document.querySelector('#app-header').classList.remove('hidden');
                 document.querySelector('#app-bottom-nav').classList.remove('hidden');
-                loadNotificationStyleAd();
 
                 // Quiz questions, saved by admin in the "quizzes" collection
                 onSnapshot(query(collection(db, "quizzes"), where("status", "==", "active")), (snap) => {
