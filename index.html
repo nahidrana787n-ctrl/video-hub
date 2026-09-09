@@ -1183,26 +1183,31 @@
         </a>
     </nav>
 
-    <!-- REVIEW REQUEST POPUP (only verified users, once per session) -->
-    <div id="review-popup" class="hidden fixed inset-x-4 bottom-24 max-w-md mx-auto z-50">
-        <div class="glass-card border border-amber-400/30 rounded-3xl shadow-2xl p-4 relative bg-slate-900/95">
-            <button onclick="window.closeReviewPopup(true)" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300">
-                <i class="fa-solid fa-xmark text-xs"></i>
+    <!-- REVIEW REQUEST POPUP (only verified users, once per session, দেখানো হয় স্ক্রিনের মাঝখানে) -->
+    <div id="review-popup" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-5 bg-black/70 backdrop-blur-sm">
+        <div class="glass-card border border-amber-400/40 rounded-[2rem] shadow-2xl p-7 relative bg-slate-900/95 max-w-sm w-full text-center animate-[popIn_0.35s_ease-out]">
+            <button onclick="window.closeReviewPopup(true)" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300">
+                <i class="fa-solid fa-xmark text-sm"></i>
             </button>
-            <div class="flex items-start gap-3 pr-6">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-lg shrink-0 shadow-lg">
-                    <i class="fa-solid fa-star"></i>
-                </div>
-                <div class="flex-1">
-                    <p class="font-bold text-white text-sm">ওয়েবসাইটটি আপনার কেমন লাগলো?</p>
-                    <p class="text-xs text-cyan-200 mt-0.5">আপনার একটি রিভিউ আমাদের জন্য অনেক গুরুত্বপূর্ণ। মাত্র কয়েক সেকেন্ড সময় নিন।</p>
-                    <button onclick="window.goToReviewFromPopup()" class="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold shadow-lg">
-                        <i class="fa-solid fa-pen"></i> রিভিউ দিন
-                    </button>
-                </div>
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-3xl shadow-lg shadow-amber-500/30 mb-4">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <p class="font-black text-white text-xl">ওয়েবসাইটটি আপনার কেমন লাগলো?</p>
+            <p class="text-sm text-cyan-200 mt-2 leading-relaxed">আপনার একটি রিভিউ আমাদের জন্য অনেক গুরুত্বপূর্ণ। মাত্র কয়েক সেকেন্ড সময় নিন।</p>
+            <div class="flex items-center gap-2 mt-6">
+                <button onclick="window.closeReviewPopup(true)" class="flex-1 px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-slate-200 text-sm font-bold transition">পরে</button>
+                <button onclick="window.goToReviewFromPopup()" class="flex-[2] px-4 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm font-bold shadow-lg shadow-orange-500/30 transition">
+                    <i class="fa-solid fa-pen mr-1.5"></i> রিভিউ দিন
+                </button>
             </div>
         </div>
     </div>
+    <style>
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.85) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
 
     <!-- FIREBASE SDK & APP JS -->
     <script type="module">
@@ -1638,28 +1643,28 @@
             });
         }
 
-        // ---------- REVIEW REQUEST POPUP ----------
+        // ---------- REVIEW REQUEST POPUP (মাঝখানে, ১০-১৫ সেকেন্ড পর দেখানো হয়) ----------
         function maybeShowReviewPopup() {
             if (!currentUser || !currentUserDoc) return;
             if (currentUserDoc.accountStatus !== 'verified') return;
             if (!reviewPopupEnabled) return;
             if (sessionStorage.getItem('review_popup_shown')) return;
 
-            const popup = document.querySelector('#review-popup');
-            if (!popup) return;
-
             sessionStorage.setItem('review_popup_shown', '1');
-            popup.classList.remove('hidden');
 
-            const hideDelay = 5000 + Math.floor(Math.random() * 5000); // ৫ থেকে ১০ সেকেন্ড
+            const showDelay = 10000 + Math.floor(Math.random() * 5000); // ১০ থেকে ১৫ সেকেন্ড পর দেখানো হবে
             reviewPopupTimer = setTimeout(() => {
-                window.closeReviewPopup(false);
-            }, hideDelay);
+                const popup = document.querySelector('#review-popup');
+                if (!popup) return;
+                popup.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }, showDelay);
         }
 
         window.closeReviewPopup = function(userClosed) {
             const popup = document.querySelector('#review-popup');
             if (popup) popup.classList.add('hidden');
+            document.body.style.overflow = '';
             if (reviewPopupTimer) {
                 clearTimeout(reviewPopupTimer);
                 reviewPopupTimer = null;
