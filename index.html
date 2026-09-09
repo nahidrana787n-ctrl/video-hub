@@ -227,7 +227,7 @@
                     <i class="fa-solid fa-chart-line text-blue-400 w-4"></i> Income History
                 </a>
                 <a href="#leaderboard" class="drawer-nav-item flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-cyan-400 transition">
-                    <i class="fa-solid fa-bolt text-amber-400 w-4"></i> সাম্প্রতিক কার্যক্রম
+                    <i class="fa-solid fa-star text-amber-400 w-4"></i> ওয়েবসাইট রিভিউ
                 </a>
                 <a href="#inbox" class="drawer-nav-item flex items-center gap-3 p-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-cyan-400 transition">
                     <i class="fa-solid fa-inbox text-pink-400 w-4"></i> Inbox Messages
@@ -621,23 +621,50 @@
         </section>
 
         <!-- LEADERBOARD / RECENT ACTIVITY VIEW -->
+        <!-- REVIEW VIEW (আগে এখানে Recent Activity ছিল, এখন ওয়েবসাইট রিভিউ সিস্টেম) -->
         <section id="view-leaderboard" class="spa-view hidden space-y-4">
-            <div class="glass-card p-5 rounded-3xl border border-white/20 shadow-xl relative overflow-hidden">
+            <div class="glass-card p-5 rounded-3xl border border-white/20 shadow-xl relative overflow-hidden text-center">
                 <div class="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-amber-400/10 blur-2xl"></div>
-                <div class="relative flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center text-xl shadow-lg shrink-0">
-                        <i class="fa-solid fa-bolt"></i>
+                <div class="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-cyan-400/10 blur-2xl"></div>
+                <div class="relative space-y-2">
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center text-2xl shadow-lg">
+                        <i class="fa-solid fa-star"></i>
                     </div>
-                    <div>
-                        <h2 class="text-lg font-black text-white">সাম্প্রতিক কার্যক্রম</h2>
-                        <p class="text-[11px] text-cyan-200">লাইভ — এইমাত্র যারা টাস্ক কমপ্লিট করে ইনকাম করলেন</p>
+                    <h2 class="text-lg font-black text-white">ওয়েবসাইট রিভিউ</h2>
+                    <p class="text-[11px] text-cyan-200">আপনার অভিজ্ঞতা শেয়ার করুন, অন্যদের সাহায্য করুন</p>
+
+                    <div class="flex items-center justify-center gap-2 pt-2">
+                        <span id="review-avg-stars" class="text-amber-400 text-xl tracking-wider">☆☆☆☆☆</span>
+                        <span id="review-avg-number" class="text-white font-black text-lg font-en">0.0</span>
                     </div>
-                    <div class="ml-auto flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded-full">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="text-[9px] font-bold text-emerald-300 font-en tracking-wider">LIVE</span>
-                    </div>
+                    <p id="review-total-count" class="text-[11px] text-slate-400 font-en">0 টি রিভিউ</p>
+
+                    <button id="open-review-form-btn" class="mt-2 px-9 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-black text-sm shadow-lg shadow-orange-900/30">
+                        <i class="fa-solid fa-pen-to-square mr-2"></i> রিভিউ দিন
+                    </button>
                 </div>
             </div>
+
+            <!-- REVIEW FORM (ডিফল্টে লুকানো) -->
+            <div id="review-form-card" class="hidden glass-card p-5 rounded-3xl border border-white/20 shadow-xl space-y-4">
+                <h3 class="font-bold text-white text-sm text-center">আপনার রেটিং দিন</h3>
+                <div id="review-star-picker" class="flex items-center justify-center gap-2 text-3xl">
+                    <span data-star="1" class="review-star-btn cursor-pointer text-slate-600 transition">★</span>
+                    <span data-star="2" class="review-star-btn cursor-pointer text-slate-600 transition">★</span>
+                    <span data-star="3" class="review-star-btn cursor-pointer text-slate-600 transition">★</span>
+                    <span data-star="4" class="review-star-btn cursor-pointer text-slate-600 transition">★</span>
+                    <span data-star="5" class="review-star-btn cursor-pointer text-slate-600 transition">★</span>
+                </div>
+                <textarea id="review-text-input" rows="3" maxlength="300" placeholder="ওয়েবসাইট সম্পর্কে আপনার মতামত লিখুন..." class="w-full p-3 rounded-xl border border-white/20 bg-slate-950 text-white text-sm"></textarea>
+                <div class="flex gap-2">
+                    <button id="submit-review-btn" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-bold text-xs">
+                        <i class="fa-solid fa-paper-plane mr-1"></i> সাবমিট করুন
+                    </button>
+                    <button id="cancel-review-btn" class="px-5 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">বাতিল</button>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-cyan-300 text-sm px-1">সব রিভিউ</h3>
             <div id="leaderboard-list-container" class="space-y-3"></div>
         </section>
 
@@ -1136,8 +1163,8 @@
         </a>
 
         <a href="#leaderboard" class="nav-bottom-item flex flex-col items-center text-cyan-300 hover:text-amber-400 w-12">
-            <i class="fa-solid fa-bolt text-lg text-amber-400"></i>
-            <span class="text-[9px] font-medium mt-0.5">সাম্প্রতিক</span>
+            <i class="fa-solid fa-star text-lg text-amber-400"></i>
+            <span class="text-[9px] font-medium mt-0.5">রিভিউ</span>
         </a>
 
         <a href="#income-history" class="relative -top-4 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 text-slate-950 w-14 h-14 rounded-full flex flex-col items-center justify-center shadow-2xl border-4 border-slate-950 active:scale-95 transition">
@@ -1759,7 +1786,9 @@
         function handleRouting() {
             const rawHash = window.location.hash || '#dashboard';
             // Clean hash by stripping query parameters like ?ref=XYZ if attached directly to hash
-            const cleanHash = rawHash.split('?')[0];
+            let cleanHash = rawHash.split('?')[0];
+            // #review কে #leaderboard এর সাথে ম্যাপ করা হয়েছে, যাতে টাস্ক লিংকে কেউ #review ব্যবহার করলেও রিভিউ পেজেই যায়
+            if (cleanHash === '#review') cleanHash = '#leaderboard';
             
             if (!currentUser) {
                 document.querySelector('#app-header').classList.add('hidden');
@@ -1917,7 +1946,7 @@
                     renderProjects();
                     handleRouting();
                     listenToUserPostedJobs();
-                    listenToRecentActivity();
+                    listenToReviews();
                     listenToUserWithdrawalHistory();
                     listenToSystemNoticeConfig();
                     listenToAdminDynamicConfig();
@@ -2552,42 +2581,161 @@
             return `${diffDay} দিন আগে`;
         }
 
-        const RECENT_ACTIVITY_ICONS = [
-            { icon: 'fa-solid fa-check-double', grad: 'from-emerald-500 to-teal-600' },
-            { icon: 'fa-solid fa-money-bill-trend-up', grad: 'from-cyan-500 to-blue-600' },
-            { icon: 'fa-solid fa-star', grad: 'from-amber-400 to-orange-500' },
-            { icon: 'fa-solid fa-bolt', grad: 'from-violet-500 to-purple-600' },
-        ];
+        // ==== ওয়েবসাইট রিভিউ সিস্টেম ====
+        const AVATAR_COLORS = ['#10b981', '#06b6d4', '#8b5cf6', '#f97316', '#ec4899', '#eab308', '#3b82f6', '#ef4444'];
+        function avatarColorFor(name) {
+            const str = (name || 'U').toString();
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+        }
+        function starsHtml(rating, size) {
+            const r = Math.round(Number(rating) || 0);
+            let out = '';
+            for (let i = 1; i <= 5; i++) out += i <= r ? '★' : '☆';
+            return `<span style="color:#fbbf24;letter-spacing:2px;font-size:${size || 14}px;">${out}</span>`;
+        }
 
-        function listenToRecentActivity() {
+        let selectedReviewStars = 0;
+        function initReviewForm() {
+            const openBtn = document.querySelector('#open-review-form-btn');
+            const cancelBtn = document.querySelector('#cancel-review-btn');
+            const submitBtn = document.querySelector('#submit-review-btn');
+            const formCard = document.querySelector('#review-form-card');
+            const starBtns = document.querySelectorAll('.review-star-btn');
+            if (!openBtn || openBtn.dataset.bound === '1') return;
+            openBtn.dataset.bound = '1';
+
+            openBtn.addEventListener('click', async () => {
+                // শুধু ভেরিফাইড ইউজাররাই রিভিউ দিতে পারবে
+                if (!currentUserDoc || currentUserDoc.accountStatus !== 'verified') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'আগে ভেরিফাই করুন!',
+                        text: 'রিভিউ দেওয়ার জন্য প্রথমে ৳15 পেমেন্ট করে আপনার অ্যাকাউন্টটি ভেরিফাই করুন।',
+                        confirmButtonText: 'ভেরিফাই পেজে যান',
+                        showCancelButton: true,
+                        cancelButtonText: 'বাতিল'
+                    }).then((result) => {
+                        if (result.isConfirmed) window.location.hash = '#verify-account';
+                    });
+                    return;
+                }
+                // আগে থেকে রিভিউ দেওয়া থাকলে সেটা ফর্মে লোড করা (এডিট করার সুযোগ)
+                try {
+                    const existing = await getDoc(doc(db, "reviews", currentUser.uid));
+                    if (existing.exists()) {
+                        const d = existing.data();
+                        selectedReviewStars = d.rating || 0;
+                        document.querySelector('#review-text-input').value = d.text || '';
+                        updateStarPickerUI();
+                    }
+                } catch {}
+                formCard.classList.remove('hidden');
+                formCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                formCard.classList.add('hidden');
+            });
+
+            starBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedReviewStars = parseInt(btn.dataset.star, 10);
+                    updateStarPickerUI();
+                });
+            });
+
+            submitBtn.addEventListener('click', async () => {
+                if (!currentUserDoc || currentUserDoc.accountStatus !== 'verified') {
+                    Swal.fire('অনুমতি নেই!', 'রিভিউ দেওয়ার জন্য আগে অ্যাকাউন্ট ভেরিফাই করুন।', 'warning');
+                    return;
+                }
+                const text = document.querySelector('#review-text-input').value.trim();
+                if (!selectedReviewStars) {
+                    Swal.fire('স্টার সিলেক্ট করুন!', 'কমপক্ষে ১টা স্টার দিয়ে রেটিং দিন।', 'warning');
+                    return;
+                }
+                if (!text) {
+                    Swal.fire('রিভিউ লিখুন!', 'আপনার মতামত লিখে সাবমিট করুন।', 'warning');
+                    return;
+                }
+                try {
+                    await setDoc(doc(db, "reviews", currentUser.uid), {
+                        userId: currentUser.uid,
+                        userName: currentUserDoc?.fullName || 'একজন ইউজার',
+                        rating: selectedReviewStars,
+                        text: text,
+                        isApproved: false,
+                        createdAt: serverTimestamp()
+                    });
+                    formCard.classList.add('hidden');
+                    Swal.fire('ধন্যবাদ!', 'আপনার রিভিউ পাঠানো হয়েছে, এডমিন যাচাই করার পর এটি সবাই দেখতে পাবে।', 'success');
+                } catch (err) {
+                    Swal.fire('ত্রুটি!', err.message, 'error');
+                }
+            });
+        }
+
+        function updateStarPickerUI() {
+            document.querySelectorAll('.review-star-btn').forEach(btn => {
+                const starNum = parseInt(btn.dataset.star, 10);
+                if (starNum <= selectedReviewStars) {
+                    btn.style.color = '#fbbf24';
+                } else {
+                    btn.style.color = '';
+                    btn.classList.add('text-slate-600');
+                }
+                if (starNum <= selectedReviewStars) btn.classList.remove('text-slate-600');
+            });
+        }
+
+        function listenToReviews() {
+            initReviewForm();
             const container = document.querySelector('#leaderboard-list-container');
             if(!container) return;
 
-            const q = query(collection(db, "recent_activity"), orderBy("createdAt", "desc"), limit(30));
+            // শুধু এডমিন-অ্যাপ্রুভড রিভিউ সবাই দেখবে (composite index এড়াতে client-side sort করা হয়েছে)
+            const q = query(collection(db, "reviews"), where("isApproved", "==", true));
             onSnapshot(q, (snapshot) => {
-                if(snapshot.empty) {
-                    container.innerHTML = '<div class="text-center py-10 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20"><i class="fa-solid fa-clock-rotate-left text-2xl mb-2 block text-cyan-400"></i>এখনো কোনো সাম্প্রতিক কার্যক্রম নেই</div>';
+                const items = snapshot.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => tsToMillis(b.createdAt) - tsToMillis(a.createdAt));
+
+                // গড় রেটিং হিসাব
+                const avgEl = document.querySelector('#review-avg-stars');
+                const numEl = document.querySelector('#review-avg-number');
+                const countEl = document.querySelector('#review-total-count');
+                if (items.length) {
+                    const avg = items.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / items.length;
+                    if (avgEl) avgEl.innerHTML = starsHtml(avg, 22);
+                    if (numEl) numEl.textContent = avg.toFixed(1);
+                    if (countEl) countEl.textContent = `${items.length} টি রিভিউ`;
+                } else {
+                    if (avgEl) avgEl.textContent = '☆☆☆☆☆';
+                    if (numEl) numEl.textContent = '0.0';
+                    if (countEl) countEl.textContent = '0 টি রিভিউ';
+                }
+
+                if (!items.length) {
+                    container.innerHTML = '<div class="text-center py-10 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20"><i class="fa-solid fa-comment-dots text-2xl mb-2 block text-cyan-400"></i>এখনো কোনো রিভিউ নেই, প্রথম রিভিউটি আপনিই দিন!</div>';
                     return;
                 }
 
-                const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-
-                container.innerHTML = items.map((item, idx) => {
-                    const style = RECENT_ACTIVITY_ICONS[idx % RECENT_ACTIVITY_ICONS.length];
-                    const amount = parseFloat(item.amount || 0);
+                container.innerHTML = items.map(item => {
+                    const initial = (item.userName || 'U').trim().charAt(0).toUpperCase();
+                    const color = avatarColorFor(item.userName);
                     return `
-                    <div class="glass-card p-4 rounded-2xl border border-white/10 shadow-lg flex items-center gap-3 hover:border-cyan-400/30 transition">
-                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br ${style.grad} text-white flex items-center justify-center text-base shadow-md shrink-0">
-                            <i class="${style.icon}"></i>
+                    <div class="glass-card p-4 rounded-2xl border border-white/10 shadow-lg space-y-2">
+                        <div class="flex items-center gap-3">
+                            <div style="background:${color};" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-sm shrink-0 shadow-md">${esc(initial)}</div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-white truncate">${esc(item.userName || 'একজন ইউজার')}</p>
+                                ${starsHtml(item.rating, 12)}
+                            </div>
+                            <span class="text-[9px] text-slate-400 font-en shrink-0">${timeAgoBn(item.createdAt)}</span>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-xs font-bold text-white truncate">${esc(item.userName || 'একজন ইউজার')}</p>
-                            <p class="text-[11px] text-cyan-200 truncate">${esc(item.taskName || 'টাস্ক কমপ্লিট করেছেন')}</p>
-                        </div>
-                        <div class="text-right shrink-0">
-                            <p class="text-sm font-black text-emerald-400 font-en">+৳${amount.toFixed(2)}</p>
-                            <p class="text-[9px] text-slate-400 font-en">${timeAgoBn(item.createdAt)}</p>
-                        </div>
+                        ${item.text ? `<p class="text-xs text-cyan-100 leading-relaxed">${esc(item.text)}</p>` : ''}
                     </div>
                 `;
                 }).join('');
