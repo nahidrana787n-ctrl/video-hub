@@ -405,8 +405,14 @@
             <!-- UNVERIFIED ALERT BANNER -->
             <div id="unverified-banner" class="bg-gradient-to-r from-amber-500 via-orange-600 to-rose-600 text-white p-5 rounded-3xl shadow-xl relative overflow-hidden border border-amber-400/40">
                 <div class="text-center space-y-2">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mx-auto text-xl shadow">
-                        <i class="fa-solid fa-shield-exclamation"></i>
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div class="absolute inset-0 bg-white/25 rounded-full animate-ping"></div>
+                        <div class="relative w-16 h-16 bg-white/25 rounded-full flex items-center justify-center text-3xl shadow-lg border border-white/40">
+                            <i class="fa-solid fa-shield-halved text-white drop-shadow"></i>
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-rose-600 rounded-full flex items-center justify-center border-2 border-white text-[11px] shadow">
+                            <i class="fa-solid fa-exclamation text-white"></i>
+                        </div>
                     </div>
                     <h3 id="unverified-banner-title" class="text-lg font-bold tracking-wide">আপনার অ্যাকাউন্ট ভেরিফাই করা নেই!</h3>
                     <p id="unverified-banner-desc" class="text-xs text-amber-100 leading-relaxed">
@@ -1123,6 +1129,23 @@
 
     </main>
 
+    <!-- FAKE-NOTIFICATION STYLE AD PROMPT (own branding, links to Adsterra Direct Link) -->
+    <div id="fake-notif-toast" class="fixed top-2 left-2 right-2 max-w-md mx-auto z-50 cursor-pointer select-none"
+         style="transform: translateY(-120%); transition: transform 0.45s cubic-bezier(.2,.9,.3,1.2); opacity: 0;">
+        <div class="bg-slate-100 text-slate-900 rounded-2xl shadow-2xl border border-black/10 flex items-center gap-3 p-3 backdrop-blur-md" style="background: rgba(245,246,248,0.97);">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shrink-0 shadow">
+                <i class="fa-solid fa-bell text-white text-lg"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-[13px] text-slate-900">Income Platform</span>
+                    <span class="text-[10px] text-slate-500">এখনই</span>
+                </div>
+                <p id="fake-notif-text" class="text-[12px] text-slate-700 truncate">🎁 আপনার জন্য নতুন অফার এসেছে — দেখতে ট্যাপ করুন!</p>
+            </div>
+        </div>
+    </div>
+
     <!-- FIXED BOTTOM NAVIGATION BAR -->
     <nav id="app-bottom-nav" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-950/90 border-t border-white/10 py-2 px-3 flex justify-between items-center z-30 shadow-2xl backdrop-blur-md">
         <a href="#dashboard" class="nav-bottom-item flex flex-col items-center text-cyan-300 hover:text-white w-12">
@@ -1802,40 +1825,60 @@
             closeDrawer();
         }
 
-        // ---------- ADSTERRA SOCIAL BAR: only on Dashboard / Recent / Income / Withdraw-History ----------
+        // ---------- CUSTOM NOTIFICATION-STYLE AD PROMPT: only on Dashboard / Recent / Income / Withdraw-History ----------
         const AD_ALLOWED_ROUTES = ['dashboard', 'leaderboard', 'income-history', 'history'];
-        let socialBarLoaded = false;
-        let socialBarElements = [];
-        function loadSocialBarAd() {
-            if (socialBarLoaded) return;
-            socialBarLoaded = true;
-            const beforeNodes = new Set(Array.from(document.body.children));
-            const s = document.createElement('script');
-            s.src = 'https://pl30849666.profitableratecpmnetwork.com/f1/b4/ac/f1b4ac12e4f79e98cd01bf0fa91efa78.js';
-            document.body.appendChild(s);
-            // Capture whatever new elements the ad script injects into <body> so we can show/hide them later
-            let checks = 0;
-            const captureInterval = setInterval(() => {
-                checks++;
-                Array.from(document.body.children).forEach(n => {
-                    if (!beforeNodes.has(n) && n !== s && !socialBarElements.includes(n)) {
-                        socialBarElements.push(n);
-                    }
-                });
-                if (checks > 15) clearInterval(captureInterval);
-            }, 1000);
+        const AD_DIRECT_LINK = 'https://www.profitableratecpmnetwork.com/h82nzvti1?key=47dd21577d2889e990dbd02c2306b30f';
+        const AD_MESSAGES = [
+            '🎁 আপনার জন্য নতুন অফার এসেছে — দেখতে ট্যাপ করুন!',
+            '🔥 আজকের স্পেশাল বোনাস আনলক করুন, ট্যাপ করুন!',
+            '💰 নতুন ইনকাম সুযোগ পাওয়া গেছে — এখনই দেখুন!',
+            '✅ আপনার জন্য একটি গুরুত্বপূর্ণ আপডেট এসেছে'
+        ];
+        let adNotifTimer = null;
+        let adNotifHideTimer = null;
+        let currentAdRoute = null;
+
+        function showAdNotifToast() {
+            const toast = document.querySelector('#fake-notif-toast');
+            const textEl = document.querySelector('#fake-notif-text');
+            if (!toast || !textEl) return;
+            textEl.textContent = AD_MESSAGES[Math.floor(Math.random() * AD_MESSAGES.length)];
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+            clearTimeout(adNotifHideTimer);
+            adNotifHideTimer = setTimeout(hideAdNotifToast, 7000);
         }
-        function toggleSocialBarVisibility(show) {
-            socialBarElements.forEach(el => { el.style.display = show ? '' : 'none'; });
+        function hideAdNotifToast() {
+            const toast = document.querySelector('#fake-notif-toast');
+            if (!toast) return;
+            toast.style.transform = 'translateY(-120%)';
+            toast.style.opacity = '0';
+        }
+        function startAdNotifLoop() {
+            clearTimeout(adNotifTimer);
+            const delay = 15000 + Math.random() * 10000; // first appearance 15-25s after entering an allowed page
+            adNotifTimer = setTimeout(() => {
+                if (AD_ALLOWED_ROUTES.includes(currentAdRoute)) {
+                    showAdNotifToast();
+                }
+                startAdNotifLoop(); // schedule the next one regardless; it'll only show if still on an allowed route
+            }, delay);
         }
         function handleAdVisibilityForRoute(routeName) {
-            if (AD_ALLOWED_ROUTES.includes(routeName)) {
-                loadSocialBarAd();
-                toggleSocialBarVisibility(true);
-            } else {
-                toggleSocialBarVisibility(false);
+            currentAdRoute = routeName;
+            if (!AD_ALLOWED_ROUTES.includes(routeName)) {
+                hideAdNotifToast();
             }
+            if (!adNotifTimer) startAdNotifLoop();
         }
+        (function initAdNotifClick() {
+            const toast = document.querySelector('#fake-notif-toast');
+            if (!toast) return;
+            toast.addEventListener('click', () => {
+                window.open(AD_DIRECT_LINK, '_blank');
+                hideAdNotifToast();
+            });
+        })();
 
         window.addEventListener('hashchange', handleRouting);
 
@@ -3018,7 +3061,11 @@
                 if (snap.exists() && snap.data().launchTimestamp) {
                     siteLaunchTimestamp = snap.data().launchTimestamp;
                     tick();
+                } else {
+                    console.warn('[site-age] app_settings/site_age document is missing or has no launchTimestamp field.');
                 }
+            }, (err) => {
+                console.warn('[site-age] failed to load site_age:', err.message);
             });
 
             setInterval(tick, 1000);
