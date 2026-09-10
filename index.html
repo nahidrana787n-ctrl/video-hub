@@ -1259,7 +1259,9 @@
             getFirestore, doc, setDoc, onSnapshot, serverTimestamp, addDoc, collection, updateDoc, increment, query, where, getDocs, orderBy, limit, arrayUnion, getDoc, runTransaction 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const IMGBB_API_KEY = "2f4740664c4a72000fd4853b6d218457";
+        // Cloudinary আনসাইনড আপলোড কনফিগারেশন — নিচের দুইটা মান আপনার নিজের Cloudinary অ্যাকাউন্ট থেকে বসাতে হবে
+        const CLOUDINARY_CLOUD_NAME = "pvbcsang";
+        const CLOUDINARY_UPLOAD_PRESET = "task_proofs";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAwqJkpVWA2gnn6GoabKJD7bWmHSoGhT8Y",
@@ -2348,16 +2350,18 @@
             }).join('');
         }
 
-        async function uploadImageToImgbb(file) {
+        async function uploadImageToCloudinary(file) {
             const formData = new FormData();
-            formData.append('image', file);
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
                 method: 'POST',
                 body: formData
             });
             const result = await res.json();
-            if (!result.success) throw new Error(result.error?.message || 'ছবি আপলোড ব্যর্থ হয়েছে, আবার চেষ্টা করুন।');
-            return result.data.url;
+            if (!result.secure_url) throw new Error(result.error?.message || 'ছবি আপলোড ব্যর্থ হয়েছে, আবার চেষ্টা করুন।');
+            return result.secure_url;
         }
 
         window.openTaskProofForm = async function(jobId) {
@@ -2371,7 +2375,7 @@
                     <p style="font-size:12px;color:#94a3b8;margin-bottom:8px;text-align:left;">টাস্ক: <strong>${job.title || ''}</strong></p>
                     <textarea id="tp-text" class="swal2-textarea" placeholder="কাজ সম্পন্ন করার বিবরণ লিখুন (যেমনঃ ইউজারনেম, আইডি ইত্যাদি)"></textarea>
                     <input id="tp-file" type="file" accept="image/*" class="swal2-file">
-                    <p style="font-size:11px;color:#64748b;margin-top:4px;text-align:left;">প্রমাণ হিসেবে একটি স্ক্রিনশট আপলোড করুন (imgbb.com এ আপলোড হবে)</p>
+                    <p style="font-size:11px;color:#64748b;margin-top:4px;text-align:left;">প্রমাণ হিসেবে একটি স্ক্রিনশট আপলোড করুন (Cloudinary তে আপলোড হবে)</p>
                 `,
                 focusConfirm: false,
                 showCancelButton: true,
@@ -2392,7 +2396,7 @@
             Swal.fire({ title: 'স্ক্রিনশট আপলোড হচ্ছে...', text: 'অনুগ্রহ করে অপেক্ষা করুন', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
             try {
-                const proofImageUrl = await uploadImageToImgbb(formValues.file);
+                const proofImageUrl = await uploadImageToCloudinary(formValues.file);
 
                 await addDoc(collection(db, "job_proofs"), {
                     userId: currentUser.uid,
