@@ -1135,7 +1135,7 @@
                     <div class="rounded-2xl bg-slate-950/70 border border-white/10 px-4 py-2">
                         <div class="wd-summary-row"><span class="text-slate-400">মেথড</span><span id="wd-sum-method" class="font-bold text-white font-en">bKash</span></div>
                         <div class="wd-summary-row"><span class="text-slate-400">উত্তোলন</span><span class="font-bold text-white font-en">৳ <span id="wd-sum-amount">0</span></span></div>
-                        <div class="wd-summary-row"><span class="text-slate-400">চার্জ</span><span class="font-bold text-emerald-400 font-en">৳ 5</span></div>
+                        <div class="wd-summary-row"><span class="text-slate-400">চার্জ</span><span class="font-bold text-emerald-400 font-en">৳ <span id="wd-sum-charge">5</span></span></div>
                         <div class="wd-summary-row"><span class="text-slate-300 font-bold">আপনি পাবেন</span><span class="font-black text-lg font-en" style="color:var(--wd)">৳ <span id="wd-sum-receive">0</span></span></div>
                     </div>
 
@@ -3284,6 +3284,7 @@
         let VERIFY_FEE_AMOUNT = 15;
         let MIN_WITHDRAW_AMOUNT = 100;
         let REFER_REWARD_AMOUNT = 5;
+        let WITHDRAW_CHARGE = 5;
 
         function loadSiteSettings() {
             onSnapshot(doc(db, "settings", "general"), (snap) => {
@@ -3294,10 +3295,12 @@
                     if (typeof s.verifyFeeAmount === 'number') VERIFY_FEE_AMOUNT = s.verifyFeeAmount;
                     if (typeof s.minWithdrawAmount === 'number') MIN_WITHDRAW_AMOUNT = s.minWithdrawAmount;
                     if (typeof s.referReward === 'number') REFER_REWARD_AMOUNT = s.referReward;
+                    if (typeof s.withdrawCharge === 'number') WITHDRAW_CHARGE = s.withdrawCharge;
                 }
 
                 const referRewardEl = document.querySelector('#refer-reward-amount');
                 if (referRewardEl) referRewardEl.textContent = REFER_REWARD_AMOUNT;
+                if (typeof window.updateWithdrawSummary === 'function') window.updateWithdrawSummary();
                 const referRewardBigEl = document.querySelector('#refer-reward-amount-big');
                 if (referRewardBigEl) referRewardBigEl.textContent = REFER_REWARD_AMOUNT;
 
@@ -3421,6 +3424,7 @@
             const accLabel = document.querySelector('#wd-account-label');
             const sumMethod = document.querySelector('#wd-sum-method');
             const sumAmt = document.querySelector('#wd-sum-amount');
+            const sumCharge = document.querySelector('#wd-sum-charge');
             const sumRecv = document.querySelector('#wd-sum-receive');
             const minNote = document.querySelector('#wd-min-note');
             if (!form || !amtInput) return;
@@ -3443,10 +3447,13 @@
 
             function updateSummary() {
                 const v = parseInt(amtInput.value) || 0;
+                const receive = Math.max(0, v - WITHDRAW_CHARGE);
                 if (sumAmt) sumAmt.textContent = v;
-                if (sumRecv) sumRecv.textContent = v; // চার্জ থাকলে এখানে হিসাব করুন
+                if (sumCharge) sumCharge.textContent = WITHDRAW_CHARGE;
+                if (sumRecv) sumRecv.textContent = receive;
                 if (minNote) minNote.textContent = MIN_WITHDRAW_AMOUNT;
             }
+            window.updateWithdrawSummary = updateSummary;
             amtInput.addEventListener('input', updateSummary);
 
             // অ্যাকাউন্ট নম্বরে শুধু ডিজিট
@@ -3479,6 +3486,7 @@
             const amount = parseFloat(document.querySelector('#withdraw-amount').value);
 
             if (amount < MIN_WITHDRAW_AMOUNT) return Swal.fire('ভুল!', `সর্বনিম্ন উইথড্র ৳${MIN_WITHDRAW_AMOUNT} টাকা।`, 'warning');
+            if (amount <= WITHDRAW_CHARGE) return Swal.fire('ভুল!', `টাকার পরিমাণ চার্জের (৳${WITHDRAW_CHARGE}) চেয়ে বেশি হতে হবে।`, 'warning');
 
             const currentBal = currentUserDoc?.balance || 0;
             if (amount > currentBal) {
@@ -3487,13 +3495,17 @@
 
             Swal.fire({ title: 'উইথড্র প্রসেস হচ্ছে...', text: 'রিকোয়েস্ট সাবমিট করা হচ্ছে', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
+            const netAmount = Number((amount - WITHDRAW_CHARGE).toFixed(2));
+
             try {
                 await addDoc(collection(db, "withdrawals"), {
                     userId: currentUser.uid,
                     userName: currentUserDoc?.fullName || 'User',
                     method: method,
                     accountNo: accountNo,
-                    amount: amount,
+                    amount: netAmount,
+                    requestedAmount: amount,
+                    charge: WITHDRAW_CHARGE,
                     status: 'pending',
                     createdAt: serverTimestamp()
                 });
@@ -3507,7 +3519,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'উইথড্র রিকোয়েস্ট সফল হয়েছে!',
-                    text: `ব্যালেন্স এবং ৩০ টি রেফার সফলভাবে কাটা হয়েছে। রিকোয়েস্ট পেন্ডিং এ রয়েছে।`,
+                    text: `আপনার ব্যালেন্স থেকে ৳${amount} কাটা হয়েছে। ৳${WITHDRAW_CHARGE} চার্জ বাদে ৳${netAmount} উইথড্র রিকোয়েস্ট পাঠানো হয়েছে, যা পেন্ডিং এ রয়েছে।`,
                     confirmButtonText: 'হিস্টোরি দেখুন'
                 }).then(() => {
                     window.location.hash = '#history';
