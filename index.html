@@ -3948,6 +3948,16 @@
         }
 
         // রেফার লিডারবোর্ড: টপ ৫ — ১/২/৩ পডিয়ামে হাইলাইট, ৪/৫ সাধারণ সারিতে
+        // পডিয়ামের র‍্যাঙ্ক ব্যাজ (১/২/৩) — সোনালি/রুপালি/ব্রোঞ্জ মেডেল স্টাইল
+        function rankBadge(rank) {
+            const t = {
+                1: { size: 'w-8 h-8 text-base', bg: 'linear-gradient(145deg,#fff7c2 0%,#fbbf24 45%,#d97706 100%)', edge: '#fde68a', glow: 'rgba(251,191,36,.75)', ink: '#78350f' },
+                2: { size: 'w-7 h-7 text-sm', bg: 'linear-gradient(145deg,#ffffff 0%,#cbd5e1 50%,#64748b 100%)', edge: '#e2e8f0', glow: 'rgba(203,213,225,.55)', ink: '#1e293b' },
+                3: { size: 'w-7 h-7 text-sm', bg: 'linear-gradient(145deg,#ffe0c2 0%,#fb923c 50%,#9a3412 100%)', edge: '#fdba74', glow: 'rgba(251,146,60,.6)', ink: '#431407' }
+            }[rank];
+            return `<span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 ${t.size} rounded-full flex items-center justify-center font-black font-en leading-none select-none" style="background:${t.bg};color:${t.ink};text-shadow:0 1px 0 rgba(255,255,255,.55);box-shadow:0 0 0 2px #0f172a,0 0 0 3.5px ${t.edge},0 5px 14px ${t.glow},inset 0 1px 2px rgba(255,255,255,.7)">${rank}</span>`;
+        }
+
         function podiumCol(u, rank) {
             const slot = {
                 1: { pad: 'pt-4 pb-5', box: 'bg-gradient-to-b from-amber-400/35 via-yellow-500/15 to-amber-700/10 border-amber-300/80 shadow-xl shadow-amber-500/30', ring: 'ring-4 ring-amber-300/90', av: 'w-16 h-16', txt: 'text-xl', icon: '<i class="fa-solid fa-crown text-amber-300 text-2xl animate-bounce-slow drop-shadow"></i>', cnt: 'text-amber-300 text-3xl', badge: 'bg-gradient-to-br from-amber-200 to-yellow-500 text-slate-900', empty: 'py-9' },
@@ -3965,9 +3975,9 @@
             return `
             <div class="flex-1 min-w-0 flex flex-col items-center text-center rounded-2xl border px-1.5 ${slot.pad} ${slot.box} ${me ? 'outline outline-2 outline-cyan-400/80 outline-offset-2' : ''}">
                 ${slot.icon}
-                <div class="relative mt-2 mb-4">
+                <div class="relative mt-2 ${rank === 1 ? 'mb-6' : 'mb-5'}">
                     <div class="${slot.ring} rounded-full">${lbAvatarHtml(u, slot.av, slot.txt)}</div>
-                    <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 min-w-[22px] h-[22px] px-1 rounded-full ${slot.badge} text-[11px] font-black font-en flex items-center justify-center border-2 border-slate-900 shadow">${rank}</span>
+                    ${rankBadge(rank)}
                 </div>
                 <p class="text-[11px] font-bold text-white truncate w-full">${esc(u.name || 'ইউজার')}</p>
                 ${me ? '<span class="mt-0.5 px-1.5 py-px rounded-full bg-cyan-400/20 text-cyan-300 text-[9px] font-bold">আপনি</span>' : ''}
