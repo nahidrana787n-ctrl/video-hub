@@ -1139,7 +1139,7 @@
             <div id="refer-pane-lb" class="hidden space-y-3">
                 <div class="text-center">
                     <h3 class="text-sm font-bold text-white flex items-center justify-center gap-1.5"><i class="fa-solid fa-ranking-star text-amber-400"></i> সেরা রেফারার</h3>
-                    <p class="text-[10px] text-cyan-300">কে সবচেয়ে বেশি রেফার করেছে</p>
+                    <p class="text-[10px] text-cyan-300">টপ ৫ — কে সবচেয়ে বেশি রেফার করেছে</p>
                 </div>
                 <div id="refer-lb-container" class="space-y-3">
                     <div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">লোড হচ্ছে...</div>
@@ -3947,23 +3947,50 @@
             return `<div class="${sizeCls} rounded-full bg-slate-800 flex items-center justify-center font-bold text-white ${textCls}">${initial}</div>`;
         }
 
+        // রেফার লিডারবোর্ড: টপ ৫ — ১/২/৩ পডিয়ামে হাইলাইট, ৪/৫ সাধারণ সারিতে
         function podiumCol(u, rank) {
-            if (!u) return '<div class="flex-1"></div>';
-            const me = currentUser && u.uid === currentUser.uid;
-            const cfg = {
-                1: { box: 'bg-gradient-to-b from-amber-400/30 to-yellow-600/10 border-amber-300/70 shadow-xl shadow-amber-500/30 pt-3 pb-5', ring: 'ring-4 ring-amber-300', av: 'w-16 h-16', txt: 'text-xl', icon: '<i class="fa-solid fa-crown text-amber-300 text-2xl animate-bounce-slow drop-shadow"></i>', cnt: 'text-amber-300 text-2xl', badge: 'bg-amber-400 text-slate-900' },
-                2: { box: 'bg-gradient-to-b from-slate-300/25 to-slate-500/10 border-slate-300/50 shadow-lg shadow-slate-300/10 pt-2.5 pb-3', ring: 'ring-2 ring-slate-300', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-slate-200 text-lg"></i>', cnt: 'text-slate-100 text-lg', badge: 'bg-slate-300 text-slate-900' },
-                3: { box: 'bg-gradient-to-b from-orange-500/25 to-amber-800/10 border-orange-400/50 shadow-lg shadow-orange-500/10 pt-2.5 pb-3', ring: 'ring-2 ring-orange-400', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-orange-400 text-lg"></i>', cnt: 'text-orange-300 text-lg', badge: 'bg-orange-400 text-slate-900' }
+            const slot = {
+                1: { pad: 'pt-4 pb-5', box: 'bg-gradient-to-b from-amber-400/35 via-yellow-500/15 to-amber-700/10 border-amber-300/80 shadow-xl shadow-amber-500/30', ring: 'ring-4 ring-amber-300/90', av: 'w-16 h-16', txt: 'text-xl', icon: '<i class="fa-solid fa-crown text-amber-300 text-2xl animate-bounce-slow drop-shadow"></i>', cnt: 'text-amber-300 text-3xl', badge: 'bg-gradient-to-br from-amber-200 to-yellow-500 text-slate-900', empty: 'py-9' },
+                2: { pad: 'pt-3 pb-4', box: 'bg-gradient-to-b from-slate-200/25 via-slate-400/10 to-slate-600/5 border-slate-200/60 shadow-lg shadow-slate-300/10', ring: 'ring-2 ring-slate-200', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-slate-200 text-xl"></i>', cnt: 'text-slate-100 text-xl', badge: 'bg-gradient-to-br from-slate-100 to-slate-400 text-slate-900', empty: 'py-6' },
+                3: { pad: 'pt-3 pb-4', box: 'bg-gradient-to-b from-orange-400/25 via-orange-600/10 to-amber-900/5 border-orange-400/60 shadow-lg shadow-orange-500/10', ring: 'ring-2 ring-orange-400', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-orange-400 text-xl"></i>', cnt: 'text-orange-300 text-xl', badge: 'bg-gradient-to-br from-orange-300 to-orange-500 text-slate-900', empty: 'py-6' }
             }[rank];
+            if (!u) {
+                return `
+                <div class="flex-1 min-w-0 flex flex-col items-center justify-center text-center rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-1.5 ${slot.empty}">
+                    <div class="w-11 h-11 rounded-full bg-slate-800/70 flex items-center justify-center text-slate-500 text-base font-black font-en">${rank}</div>
+                    <p class="text-[10px] text-slate-500 mt-2">এখনো খালি</p>
+                </div>`;
+            }
+            const me = currentUser && u.uid === currentUser.uid;
             return `
-            <div class="flex-1 min-w-0 flex flex-col items-center text-center rounded-2xl border px-1.5 ${cfg.box} ${me ? 'outline outline-2 outline-cyan-400' : ''}">
-                ${cfg.icon}
-                <div class="relative mt-1"><div class="${cfg.ring} rounded-full">${lbAvatarHtml(u, cfg.av, cfg.txt)}</div>
-                    <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full ${cfg.badge} text-[10px] font-black font-en flex items-center justify-center border-2 border-slate-900">${rank}</span>
+            <div class="flex-1 min-w-0 flex flex-col items-center text-center rounded-2xl border px-1.5 ${slot.pad} ${slot.box} ${me ? 'outline outline-2 outline-cyan-400/80 outline-offset-2' : ''}">
+                ${slot.icon}
+                <div class="relative mt-2 mb-4">
+                    <div class="${slot.ring} rounded-full">${lbAvatarHtml(u, slot.av, slot.txt)}</div>
+                    <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 min-w-[22px] h-[22px] px-1 rounded-full ${slot.badge} text-[11px] font-black font-en flex items-center justify-center border-2 border-slate-900 shadow">${rank}</span>
                 </div>
-                <p class="text-[11px] font-bold text-white truncate w-full mt-2">${esc(u.name || 'ইউজার')}${me ? ' <span class="text-cyan-300">(আপনি)</span>' : ''}</p>
-                <p class="font-black font-en leading-tight ${cfg.cnt}">${Number(u.count) || 0}</p>
+                <p class="text-[11px] font-bold text-white truncate w-full">${esc(u.name || 'ইউজার')}</p>
+                ${me ? '<span class="mt-0.5 px-1.5 py-px rounded-full bg-cyan-400/20 text-cyan-300 text-[9px] font-bold">আপনি</span>' : ''}
+                <p class="font-black font-en leading-tight mt-1 ${slot.cnt}">${Number(u.count) || 0}</p>
                 <p class="text-[9px] text-slate-300 uppercase font-bold">রেফার</p>
+            </div>`;
+        }
+
+        function lbRow(u, rank) {
+            if (!u) {
+                return `
+                <div class="p-3 rounded-2xl border border-dashed border-white/10 bg-white/[0.02] flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-full bg-slate-800/70 text-center leading-7 text-xs font-black text-slate-500 font-en shrink-0">${rank}</span>
+                    <p class="flex-1 text-xs text-slate-500">এখনো কেউ নেই</p>
+                </div>`;
+            }
+            const me = currentUser && u.uid === currentUser.uid;
+            return `
+            <div class="glass-card p-3 rounded-2xl border ${me ? 'border-cyan-400/70' : 'border-white/10'} flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-full bg-slate-800 text-center leading-7 text-xs font-black text-slate-300 font-en shrink-0">${rank}</span>
+                ${lbAvatarHtml(u, 'w-9 h-9 shrink-0', 'text-xs')}
+                <p class="flex-1 min-w-0 text-sm font-semibold text-white truncate">${esc(u.name || 'ইউজার')}${me ? ' <span class="text-cyan-300 text-[10px] font-bold">(আপনি)</span>' : ''}</p>
+                <span class="text-sm font-black text-cyan-200 font-en shrink-0">${Number(u.count) || 0} <span class="text-[9px] text-slate-400 font-bold">রেফার</span></span>
             </div>`;
         }
 
@@ -3971,25 +3998,16 @@
             if (referLbListening || !currentUser) return;
             referLbListening = true;
             const box = document.querySelector('#refer-lb-container');
-            onSnapshot(query(collection(db, 'refer_leaderboard'), orderBy('count', 'desc'), limit(20)), (snap) => {
-                const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(u => (Number(u.count) || 0) > 0);
+            onSnapshot(query(collection(db, 'refer_leaderboard'), orderBy('count', 'desc'), limit(5)), (snap) => {
+                const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(u => (Number(u.count) || 0) > 0).slice(0, 5);
                 if (!box) return;
                 if (!list.length) {
                     box.innerHTML = '<div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">এখনো কেউ লিডারবোর্ডে নেই। প্রথম রেফারার হয়ে যান! 🏆</div>';
                     return;
                 }
                 const podium = `<div class="flex items-end gap-2">${podiumCol(list[1], 2)}${podiumCol(list[0], 1)}${podiumCol(list[2], 3)}</div>`;
-                const rest = list.slice(3).map((u, i) => {
-                    const me = currentUser && u.uid === currentUser.uid;
-                    return `
-                    <div class="glass-card p-3 rounded-2xl border ${me ? 'border-cyan-400/70' : 'border-white/10'} flex items-center gap-2.5">
-                        <span class="w-6 text-center text-xs font-black text-slate-400 font-en">${i + 4}</span>
-                        ${lbAvatarHtml(u, 'w-9 h-9 shrink-0', 'text-xs')}
-                        <p class="flex-1 min-w-0 text-sm font-semibold text-white truncate">${esc(u.name || 'ইউজার')}${me ? ' <span class="text-cyan-300 text-[10px]">(আপনি)</span>' : ''}</p>
-                        <span class="text-sm font-black text-cyan-200 font-en shrink-0">${Number(u.count) || 0} <span class="text-[9px] text-slate-400 font-bold">রেফার</span></span>
-                    </div>`;
-                }).join('');
-                box.innerHTML = podium + (rest ? `<div class="space-y-2 pt-1">${rest}</div>` : '');
+                const rest = `<div class="space-y-2 pt-1">${lbRow(list[3], 4)}${lbRow(list[4], 5)}</div>`;
+                box.innerHTML = podium + rest;
             }, (err) => {
                 console.warn('leaderboard load error:', err.message);
                 referLbListening = false;
