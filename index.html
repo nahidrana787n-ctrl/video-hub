@@ -1107,6 +1107,12 @@
                 <p class="text-[10px] text-slate-400">রেজিস্ট্রেশনের সময় এই কোড ব্যবহার করে অ্যাকাউন্ট খুললে এবং ভেরিফাই করলে আপনি এই রিওয়ার্ড পাবেন।</p>
             </div>
 
+            <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-950/60 border border-white/10">
+                <button type="button" id="refer-tab-my" onclick="switchReferTab('my')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg"><i class="fa-solid fa-user-group"></i> My Refer</button>
+                <button type="button" id="refer-tab-lb" onclick="switchReferTab('lb')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition text-cyan-200"><i class="fa-solid fa-trophy"></i> লিডারবোর্ড</button>
+            </div>
+
+            <div id="refer-pane-my" class="space-y-4">
             <div class="grid grid-cols-3 gap-2.5">
                 <div class="glass-card p-4 rounded-2xl border border-white/20 text-center">
                     <p class="text-[10px] text-cyan-300 uppercase font-bold">মোট রেফার</p>
@@ -1125,6 +1131,17 @@
             <div>
                 <h3 class="text-sm font-bold text-white mb-2 flex items-center gap-1.5"><i class="fa-solid fa-list-ul text-cyan-400"></i> রেফার লিস্ট</h3>
                 <div id="refer-list-container" class="space-y-2">
+                    <div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">লোড হচ্ছে...</div>
+                </div>
+            </div>
+            </div>
+
+            <div id="refer-pane-lb" class="hidden space-y-3">
+                <div class="text-center">
+                    <h3 class="text-sm font-bold text-white flex items-center justify-center gap-1.5"><i class="fa-solid fa-ranking-star text-amber-400"></i> সেরা রেফারার</h3>
+                    <p class="text-[10px] text-cyan-300">কে সবচেয়ে বেশি রেফার করেছে</p>
+                </div>
+                <div id="refer-lb-container" class="space-y-3">
                     <div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">লোড হচ্ছে...</div>
                 </div>
             </div>
@@ -1498,9 +1515,15 @@
         <!-- ACCOUNT SETTINGS VIEW -->
         <section id="view-settings" class="spa-view hidden space-y-4">
             <div class="glass-card text-white p-6 rounded-3xl shadow-xl text-center relative overflow-hidden border border-white/20">
-                <div class="w-20 h-20 mx-auto rounded-full border-4 border-cyan-400 shadow-xl overflow-hidden relative">
-                    <img id="profile-img-preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-dup-src="#user-avatar-img" class="w-full h-full object-cover">
+                <div class="relative w-24 h-24 mx-auto">
+                    <div id="profile-avatar-wrap" role="button" tabindex="0" aria-label="প্রোফাইল ছবি পরিবর্তন করুন" onclick="if(!document.getElementById('profile-photo-btn').disabled)document.getElementById('profile-photo-input').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" class="w-24 h-24 rounded-full border-4 border-cyan-400 shadow-xl shadow-cyan-400/20 overflow-hidden relative bg-slate-800 cursor-pointer active:scale-95 transition">
+                        <img id="profile-img-preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-dup-src="#user-avatar-img" class="w-full h-full object-cover">
+                        <div id="profile-photo-loading" class="hidden absolute inset-0 bg-slate-950/70 flex items-center justify-center"><i class="fa-solid fa-spinner fa-spin text-cyan-300 text-xl"></i></div>
+                    </div>
+                    <button type="button" id="profile-photo-btn" onclick="document.getElementById('profile-photo-input').click()" aria-label="Change profile photo" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 text-white border-2 border-slate-900 shadow-lg shadow-cyan-500/40 flex items-center justify-center text-[11px] active:scale-90 transition disabled:opacity-60"><i class="fa-solid fa-camera"></i></button>
+                    <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="handleProfilePhotoSelect(event)">
                 </div>
+                <p class="text-[10px] text-cyan-300 mt-2">ছবিতে ট্যাপ করে গ্যালারি থেকে নতুন ছবি দিন</p>
                 <h3 id="profile-card-fullname" class="font-black text-xl mt-2 text-white">User Profile</h3>
                 <p id="profile-card-email" class="text-xs text-cyan-200 font-en">example@gmail.com</p>
                 <div class="mt-2 inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider font-en" id="profile-card-status">● UNVERIFIED</div>
@@ -1511,10 +1534,10 @@
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-white/10"><span class="block text-[10px] text-cyan-300">USER ID</span><strong id="set-disp-uid" class="font-en text-white">------</strong></div>
                 </div>
 
-                <form id="settings-update-form" onsubmit="handlePasswordChange(event)" class="space-y-3 text-xs">
+                <form id="settings-update-form" onsubmit="handleProfileSave(event)" class="space-y-3 text-xs">
                     <div>
                         <label class="block font-semibold text-cyan-200 mb-1">সম্পূর্ণ নাম (Full Name)</label>
-                        <input type="text" id="set-fullname" value="" placeholder="আপনার নাম" class="w-full p-3 rounded-xl border border-white/20 text-sm font-medium bg-slate-950 text-white">
+                        <input type="text" id="set-fullname" value="" maxlength="40" autocomplete="name" placeholder="আপনার নাম" class="w-full p-3 rounded-xl border border-white/20 text-sm font-medium bg-slate-950 text-white">
                     </div>
                     <div>
                         <label class="block font-semibold text-cyan-200 mb-1">জিমেইল এড্রেস (Email)</label>
@@ -1524,14 +1547,8 @@
                         <label class="block font-semibold text-cyan-200 mb-1">মোবাইল নম্বর (Phone)</label>
                         <input type="tel" id="set-phone" readonly="" value="" placeholder="মোবাইল নম্বর" class="w-full p-3 rounded-xl border border-white/20 bg-slate-950/50 text-slate-400 text-sm font-en">
                     </div>
-                    <div>
-                        <label class="block font-semibold text-cyan-200 mb-1">নতুন পাসওয়ার্ড (Change Password)</label>
-                        <input type="password" id="set-new-pass" placeholder="নতুন পাসওয়ার্ড লিখুন..." class="w-full p-3 rounded-xl border border-white/20 text-sm text-white bg-slate-950">
-                    </div>
 
-                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-2xl shadow-lg hover:opacity-90 text-xs tracking-wider font-en flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-key"></i> পাসওয়ার্ড পরিবর্তন করুন
-                    </button>
+                    <button type="submit" id="profile-save-btn" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-2xl shadow-lg hover:opacity-90 text-xs tracking-wider flex items-center justify-center gap-2 disabled:opacity-60"><i class="fa-solid fa-floppy-disk"></i> নাম সেভ করুন</button>
                     <a href="#dashboard" class="block text-center py-2 text-cyan-300 font-bold text-xs">← ড্যাশবোর্ডে ফিরুন</a>
                 </form>
             </div>
@@ -2497,6 +2514,7 @@
             } else {
                 currentUser = null;
                 currentUserDoc = null;
+                applyAvatar(null);
                 document.querySelector('#header-user-card').classList.add('hidden');
                 document.querySelector('#app-header').classList.add('hidden');
                 document.querySelector('#app-bottom-nav').classList.add('hidden');
@@ -2558,8 +2576,21 @@
             });
         }
 
+        const DEFAULT_AVATAR_SRC = document.querySelector('#user-avatar-img')?.getAttribute('src') || '';
+        function applyAvatar(url) {
+            ['user-avatar-img', 'drawer-user-avatar', 'profile-img-preview'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.onerror = () => { el.onerror = null; el.src = DEFAULT_AVATAR_SRC; };
+                const next = url || DEFAULT_AVATAR_SRC;
+                if (el.getAttribute('src') !== next) el.src = next;
+            });
+        }
+
         function updateUIWithUserData(data) {
             if(!data) return;
+            applyAvatar(data.photoURL);
+            syncReferLeaderboard(data);
 
             const userBalance = data.balance || 0;
             document.querySelector('#user-display-name').textContent = data.fullName || 'User';
@@ -2595,7 +2626,8 @@
             }
             if (setDispUid) setDispUid.textContent = (data.uid || '').slice(0,8).toUpperCase();
 
-            document.querySelector('#set-fullname').value = data.fullName || '';
+            const setNameEl = document.querySelector('#set-fullname');
+            if (setNameEl && document.activeElement !== setNameEl) setNameEl.value = data.fullName || '';
             document.querySelector('#set-email').value = data.email || '';
             document.querySelector('#set-phone').value = data.phone || 'N/A';
 
@@ -3879,6 +3911,92 @@
             });
         }
 
+        // ---------- REFER: ট্যাব + লিডারবোর্ড ----------
+        let referLbListening = false;
+        let lastReferSyncKey = '';
+
+        window.switchReferTab = function(tab) {
+            const isLb = tab === 'lb';
+            document.querySelector('#refer-pane-my')?.classList.toggle('hidden', isLb);
+            document.querySelector('#refer-pane-lb')?.classList.toggle('hidden', !isLb);
+            const on = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg';
+            const off = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition text-cyan-200';
+            const my = document.querySelector('#refer-tab-my'), lb = document.querySelector('#refer-tab-lb');
+            if (my) my.className = isLb ? off : on;
+            if (lb) lb.className = isLb ? on : off;
+            if (isLb) listenToReferLeaderboard();
+        };
+
+        // নিজের রেফার সংখ্যা লিডারবোর্ডে সিঙ্ক করা (users.referralsCount এর সাথে মিলিয়ে)
+        function syncReferLeaderboard(data) {
+            if (!currentUser || !data) return;
+            const count = Number(data.referralsCount) || 0;
+            if (count < 1) return;
+            const name = String(data.fullName || 'ইউজার').slice(0, 40);
+            const key = `${currentUser.uid}|${count}|${name}|${data.photoURL || ''}`;
+            if (key === lastReferSyncKey) return;
+            lastReferSyncKey = key;
+            setDoc(doc(db, 'refer_leaderboard', currentUser.uid), {
+                uid: currentUser.uid, name, photoURL: data.photoURL || null, count, updatedAt: serverTimestamp()
+            }).catch((err) => console.warn('leaderboard sync failed:', err.message));
+        }
+
+        function lbAvatarHtml(u, sizeCls, textCls) {
+            const initial = esc(String(u.name || 'U').trim().charAt(0).toUpperCase() || 'U');
+            if (u.photoURL) return `<img src="${esc(u.photoURL)}" alt="" class="${sizeCls} rounded-full object-cover bg-slate-800" onerror="this.outerHTML='<div class=\'${sizeCls} rounded-full bg-slate-800 flex items-center justify-center font-bold text-white ${textCls}\'>${initial}</div>'">`;
+            return `<div class="${sizeCls} rounded-full bg-slate-800 flex items-center justify-center font-bold text-white ${textCls}">${initial}</div>`;
+        }
+
+        function podiumCol(u, rank) {
+            if (!u) return '<div class="flex-1"></div>';
+            const me = currentUser && u.uid === currentUser.uid;
+            const cfg = {
+                1: { box: 'bg-gradient-to-b from-amber-400/30 to-yellow-600/10 border-amber-300/70 shadow-xl shadow-amber-500/30 pt-3 pb-5', ring: 'ring-4 ring-amber-300', av: 'w-16 h-16', txt: 'text-xl', icon: '<i class="fa-solid fa-crown text-amber-300 text-2xl animate-bounce-slow drop-shadow"></i>', cnt: 'text-amber-300 text-2xl', badge: 'bg-amber-400 text-slate-900' },
+                2: { box: 'bg-gradient-to-b from-slate-300/25 to-slate-500/10 border-slate-300/50 shadow-lg shadow-slate-300/10 pt-2.5 pb-3', ring: 'ring-2 ring-slate-300', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-slate-200 text-lg"></i>', cnt: 'text-slate-100 text-lg', badge: 'bg-slate-300 text-slate-900' },
+                3: { box: 'bg-gradient-to-b from-orange-500/25 to-amber-800/10 border-orange-400/50 shadow-lg shadow-orange-500/10 pt-2.5 pb-3', ring: 'ring-2 ring-orange-400', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-orange-400 text-lg"></i>', cnt: 'text-orange-300 text-lg', badge: 'bg-orange-400 text-slate-900' }
+            }[rank];
+            return `
+            <div class="flex-1 min-w-0 flex flex-col items-center text-center rounded-2xl border px-1.5 ${cfg.box} ${me ? 'outline outline-2 outline-cyan-400' : ''}">
+                ${cfg.icon}
+                <div class="relative mt-1"><div class="${cfg.ring} rounded-full">${lbAvatarHtml(u, cfg.av, cfg.txt)}</div>
+                    <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full ${cfg.badge} text-[10px] font-black font-en flex items-center justify-center border-2 border-slate-900">${rank}</span>
+                </div>
+                <p class="text-[11px] font-bold text-white truncate w-full mt-2">${esc(u.name || 'ইউজার')}${me ? ' <span class="text-cyan-300">(আপনি)</span>' : ''}</p>
+                <p class="font-black font-en leading-tight ${cfg.cnt}">${Number(u.count) || 0}</p>
+                <p class="text-[9px] text-slate-300 uppercase font-bold">রেফার</p>
+            </div>`;
+        }
+
+        function listenToReferLeaderboard() {
+            if (referLbListening || !currentUser) return;
+            referLbListening = true;
+            const box = document.querySelector('#refer-lb-container');
+            onSnapshot(query(collection(db, 'refer_leaderboard'), orderBy('count', 'desc'), limit(20)), (snap) => {
+                const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(u => (Number(u.count) || 0) > 0);
+                if (!box) return;
+                if (!list.length) {
+                    box.innerHTML = '<div class="text-center py-8 text-xs text-cyan-200 glass-card rounded-3xl border border-white/20">এখনো কেউ লিডারবোর্ডে নেই। প্রথম রেফারার হয়ে যান! 🏆</div>';
+                    return;
+                }
+                const podium = `<div class="flex items-end gap-2">${podiumCol(list[1], 2)}${podiumCol(list[0], 1)}${podiumCol(list[2], 3)}</div>`;
+                const rest = list.slice(3).map((u, i) => {
+                    const me = currentUser && u.uid === currentUser.uid;
+                    return `
+                    <div class="glass-card p-3 rounded-2xl border ${me ? 'border-cyan-400/70' : 'border-white/10'} flex items-center gap-2.5">
+                        <span class="w-6 text-center text-xs font-black text-slate-400 font-en">${i + 4}</span>
+                        ${lbAvatarHtml(u, 'w-9 h-9 shrink-0', 'text-xs')}
+                        <p class="flex-1 min-w-0 text-sm font-semibold text-white truncate">${esc(u.name || 'ইউজার')}${me ? ' <span class="text-cyan-300 text-[10px]">(আপনি)</span>' : ''}</p>
+                        <span class="text-sm font-black text-cyan-200 font-en shrink-0">${Number(u.count) || 0} <span class="text-[9px] text-slate-400 font-bold">রেফার</span></span>
+                    </div>`;
+                }).join('');
+                box.innerHTML = podium + (rest ? `<div class="space-y-2 pt-1">${rest}</div>` : '');
+            }, (err) => {
+                console.warn('leaderboard load error:', err.message);
+                referLbListening = false;
+                if (box) box.innerHTML = '<div class="text-center py-8 text-xs text-rose-300 glass-card rounded-3xl border border-white/20">লিডারবোর্ড লোড করা যায়নি।</div>';
+            });
+        }
+
         function myReferCodeFallback() {
             return currentUser ? currentUser.uid.slice(-8).toUpperCase() : '------';
         }
@@ -4130,18 +4248,97 @@
             });
         }
 
-        window.handlePasswordChange = function(e) {
+        // ---------- প্রোফাইল: নাম সেভ + ছবি আপলোড (Cloudinary) ----------
+        window.handleProfileSave = async function(e) {
             e.preventDefault();
-            const newPass = document.querySelector('#set-new-pass').value.trim();
-            if(!newPass) return Swal.fire('সতর্কতা', 'নতুন পাসওয়ার্ড লিখুন', 'warning');
+            if (!currentUser) return Swal.fire('ত্রুটি!', 'লগইন করুন।', 'error');
+            const input = document.querySelector('#set-fullname');
+            const name = (input.value || '').replace(/\s+/g, ' ').trim();
+            if (name.length < 2) return Swal.fire('সতর্কতা', 'নাম কমপক্ষে ২ অক্ষরের হতে হবে।', 'warning');
+            if (name.length > 40) return Swal.fire('সতর্কতা', 'নাম সর্বোচ্চ ৪০ অক্ষরের হতে পারবে।', 'warning');
+            if (name === (currentUserDoc?.fullName || '')) return Swal.fire({ icon: 'info', title: 'কোনো পরিবর্তন নেই', text: 'নামটি আগের মতোই আছে।', confirmButtonText: 'ঠিক আছে' });
 
-            Swal.fire({
-                icon: 'info',
-                title: 'পাসওয়ার্ড পরিবর্তন',
-                text: 'সাপোর্ট সার্ভিস আপাতত বন্ধ আছে। পরে আবার চেষ্টা করুন।',
-                confirmButtonText: 'ঠিক আছে'
-            });
+            const btn = document.querySelector('#profile-save-btn');
+            const btnHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), { fullName: name });
+                currentUserDoc = { ...(currentUserDoc || {}), fullName: name };
+                localStorage.setItem('user_cache_' + currentUser.uid, JSON.stringify(currentUserDoc));
+                updateUIWithUserData(currentUserDoc);
+                input.value = name;
+                Swal.fire({ icon: 'success', title: 'সেভ হয়েছে!', text: 'আপনার নাম আপডেট করা হয়েছে।', timer: 1800, showConfirmButton: false });
+            } catch (err) {
+                console.error('name save error:', err);
+                Swal.fire('ত্রুটি!', 'নাম সেভ করা যায়নি, আবার চেষ্টা করুন।', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = btnHtml;
+            }
         };
+
+        // ছবি বর্গাকার (512x512) করে ছোট করা — দ্রুত আপলোড ও কম ডেটা খরচের জন্য
+        function resizeImageForAvatar(file) {
+            return new Promise((resolve) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => {
+                    try {
+                        const size = 512;
+                        const side = Math.min(img.width, img.height);
+                        const sx = (img.width - side) / 2, sy = (img.height - side) / 2;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = size; canvas.height = size;
+                        canvas.getContext('2d').drawImage(img, sx, sy, side, side, 0, 0, size, size);
+                        canvas.toBlob((blob) => {
+                            URL.revokeObjectURL(url);
+                            resolve(blob ? new File([blob], 'avatar.jpg', { type: 'image/jpeg' }) : file);
+                        }, 'image/jpeg', 0.88);
+                    } catch (_) { URL.revokeObjectURL(url); resolve(file); }
+                };
+                img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+                img.src = url;
+            });
+        }
+
+        window.handleProfilePhotoSelect = async function(e) {
+            const input = e.target;
+            const file = input.files && input.files[0];
+            input.value = '';
+            if (!file) return;
+            if (document.querySelector('#profile-photo-btn')?.disabled) return;
+            if (!currentUser) return Swal.fire('ত্রুটি!', 'লগইন করুন।', 'error');
+            if (!file.type.startsWith('image/')) return Swal.fire('সতর্কতা', 'শুধু ছবি (JPG/PNG) বেছে নিন।', 'warning');
+            if (file.size > 15 * 1024 * 1024) return Swal.fire('সতর্কতা', 'ছবির সাইজ ১৫MB এর বেশি হতে পারবে না।', 'warning');
+
+            const loader = document.querySelector('#profile-photo-loading');
+            const camBtn = document.querySelector('#profile-photo-btn');
+            loader.classList.remove('hidden');
+            camBtn.disabled = true;
+            let localPreview = null;
+            try {
+                const prepared = await resizeImageForAvatar(file);
+                localPreview = URL.createObjectURL(prepared);
+                document.querySelector('#profile-img-preview').src = localPreview;
+
+                const photoURL = await uploadImageToCloudinary(prepared);
+                await updateDoc(doc(db, 'users', currentUser.uid), { photoURL });
+                currentUserDoc = { ...(currentUserDoc || {}), photoURL };
+                localStorage.setItem('user_cache_' + currentUser.uid, JSON.stringify(currentUserDoc));
+                applyAvatar(photoURL);
+                Swal.fire({ icon: 'success', title: 'ছবি আপডেট হয়েছে!', timer: 1600, showConfirmButton: false });
+            } catch (err) {
+                console.error('photo upload error:', err);
+                applyAvatar(currentUserDoc?.photoURL || null);
+                Swal.fire('ত্রুটি!', err.message || 'ছবি আপলোড করা যায়নি, আবার চেষ্টা করুন।', 'error');
+            } finally {
+                if (localPreview) URL.revokeObjectURL(localPreview);
+                loader.classList.add('hidden');
+                camBtn.disabled = false;
+            }
+        };
+
 
         // MATH JOB (আগে এই ফাংশনটি ডিফাইন করা ছিল না, যার কারণে কনসোলে ReferenceError দেখাচ্ছিল)
         let currentMathAns = 0;
@@ -4568,6 +4765,7 @@
                 await signOut(auth);
                 currentUser = null;
                 currentUserDoc = null;
+                applyAvatar(null);
                 document.querySelector('#header-user-card').classList.add('hidden');
                 document.querySelector('#app-header').classList.add('hidden');
                 document.querySelector('#app-bottom-nav').classList.add('hidden');
