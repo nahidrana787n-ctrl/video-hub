@@ -338,6 +338,46 @@
 .lb-label{ font-size:9px; font-weight:800; color:var(--ink-soft); letter-spacing:.04em; text-transform:uppercase; }
 .lb-empty-txt{ margin-top:10px; font-size:10px; font-weight:800; color:var(--ink-soft); }
 </style>
+<style id="wd-proof-css">
+/* ===== উইথড্র পেজের লাইভ "সফল উইথড্র" পপআপ ===== */
+#wd-proof-toast{
+    position:fixed; left:12px; right:12px; z-index:45; pointer-events:none;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 92px);
+    display:flex; justify-content:center;
+}
+.wd-toast{
+    pointer-events:auto; width:100%; max-width:420px; position:relative;
+    display:flex; align-items:center; gap:14px;
+    background:#fff; color:#0f172a; border-radius:20px; padding:14px 40px 14px 14px;
+    box-shadow:0 18px 40px -12px rgba(0,0,0,.55), 0 0 0 1px rgba(15,23,42,.06);
+    opacity:0; transform:translateY(24px) scale(.97);
+    transition:opacity .35s ease, transform .35s cubic-bezier(.2,.9,.3,1.2);
+}
+.wd-toast.show{ opacity:1; transform:translateY(0) scale(1); }
+.wd-toast__av{
+    width:56px; height:56px; flex:none; border-radius:9999px; padding:2.5px;
+    background:linear-gradient(145deg,#ffe28a,#f0a91c 55%,#b9770e);
+}
+.wd-toast__av > *{
+    box-sizing:border-box; width:100%; height:100%; border-radius:9999px; object-fit:cover; background:#dbeafe;
+    border:2px solid #fff; display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:20px; color:#1e3a8a;
+}
+.wd-toast__body{ min-width:0; flex:1; line-height:1.3; }
+.wd-toast__name{ font-size:15px; font-weight:800; color:#0f172a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wd-toast__msg{ font-size:12.5px; color:#475569; margin-top:2px; }
+.wd-toast__msg b{ color:#15803d; font-size:14px; font-weight:900; font-family:Inter,sans-serif; }
+.wd-toast__acc{ font-size:12px; margin-top:2px; color:#64748b; }
+.wd-toast__acc b{ font-weight:900; }
+.wd-toast__time{ font-size:11px; margin-top:4px; color:#64748b; display:flex; align-items:center; gap:6px; }
+.wd-toast__dot{ width:8px; height:8px; border-radius:9999px; background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.2); flex:none; animation:wdDot 1.6s ease-in-out infinite; }
+@keyframes wdDot{ 50%{ box-shadow:0 0 0 6px rgba(34,197,94,0); } }
+.wd-toast__x{
+    position:absolute; top:10px; right:12px; width:26px; height:26px; border:0; background:transparent;
+    color:#94a3b8; font-size:16px; border-radius:9999px; cursor:pointer;
+}
+.wd-toast__x:active{ background:#f1f5f9; }
+</style>
 </head>
 <body class="text-slate-100 min-h-screen pb-24 max-w-md mx-auto shadow-2xl relative flex flex-col justify-between border-x border-white/10">
 
@@ -2510,6 +2550,7 @@
                 listenToMyVideoSubmissions();
                 resetVideoEarnForm();
             }
+            if (cleanHash === '#withdraw') startWithdrawProofToasts(); else stopWithdrawProofToasts();
             if (cleanHash === '#inbox') {
                 localStorage.setItem('inbox_last_seen', Date.now().toString());
                 document.querySelector('#inbox-red-light')?.classList.add('hidden');
@@ -4094,6 +4135,137 @@
             });
         }
 
+        // ================= উইথড্র পেজে "সফল উইথড্র" লাইভ পপআপ (১০-১৫ সেকেন্ড পর পর) =================
+        // সম্পূর্ণ রিয়েল ডেটা: শুধু সত্যিকারের পেইড/অ্যাপ্রুভড উইথড্র, নম্বর মাস্ক করা।
+        // ডেটা থাকে পাবলিক কালেকশন `withdraw_proofs` এ (আসল `withdrawals` কালেকশন প্রাইভেটই থাকে)।
+        let wdProofRunning = false, wdProofTimer = null, wdHideTimer = null;
+        let wdProofList = [], wdProofIdx = 0, wdProofLoadedAt = 0, wdProofLoading = false;
+
+        function wdMaskAccount(no) {
+            const d = String(no || '').replace(/\D/g, '');
+            return d.length >= 7 ? d.slice(0, 3) + '****' + d.slice(-4) : '****';
+        }
+
+        function wdMethodTag(method) {
+            const m = String(method || '').toLowerCase();
+            if (m === 'bkash') return { t: 'বিকাশ', c: '#d12b7e' };
+            if (m === 'nagad') return { t: 'নগদ', c: '#f26b21' };
+            if (m === 'rocket') return { t: 'রকেট', c: '#8c3494' };
+            return { t: String(method || 'পেমেন্ট').toUpperCase(), c: '#0e7490' };
+        }
+
+        function wdRelTime(ts) {
+            const bn = (n) => n.toLocaleString('bn-BD');
+            const sec = ts && ts.seconds ? Math.max(0, Math.floor(Date.now() / 1000 - ts.seconds)) : null;
+            if (sec === null) return 'সফল হয়েছে';
+            if (sec < 120) return 'মাত্র সফল হয়েছে';
+            if (sec < 3600) return `${bn(Math.floor(sec / 60))} মিনিট আগে সফল হয়েছে`;
+            if (sec < 86400) return `${bn(Math.floor(sec / 3600))} ঘণ্টা আগে সফল হয়েছে`;
+            return `${bn(Math.floor(sec / 86400))} দিন আগে সফল হয়েছে`;
+        }
+
+        // ইউজারের নিজের পেইড উইথড্র দেখলে সেটার মাস্ক করা প্রুফ পাবলিক কালেকশনে রাখা (ডক আইডি = উইথড্র আইডি, তাই ডুপ্লিকেট হয় না)
+        function syncWithdrawProofs(list) {
+            if (!currentUser || !list || !list.length) return;
+            const key = `wd_proof_synced_${currentUser.uid}`;
+            let done = [];
+            try { done = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { done = []; }
+            const todo = list.filter(w => (w.status === 'paid' || w.status === 'approved') && !done.includes(w.id)).slice(0, 5);
+            todo.forEach(w => {
+                const paidAt = w.paidAt || w.approvedAt || w.processedAt || w.updatedAt || w.createdAt || null;
+                setDoc(doc(db, 'withdraw_proofs', w.id), {
+                    userId: currentUser.uid,
+                    name: String(w.userName || currentUserDoc?.fullName || 'ইউজার').slice(0, 40),
+                    photoURL: currentUserDoc?.photoURL || null,
+                    method: String(w.method || ''),
+                    maskedAccount: wdMaskAccount(w.accountNo),
+                    amount: Number(w.amount) || 0,
+                    paidAt: (paidAt && paidAt.seconds) ? paidAt : serverTimestamp()
+                }).then(() => {
+                    done.push(w.id);
+                    try { localStorage.setItem(key, JSON.stringify(done.slice(-100))); } catch (e) {}
+                }).catch((err) => console.warn('withdraw proof sync failed:', err.message));
+            });
+        }
+
+        async function wdLoadProofs() {
+            if (wdProofLoading) return;
+            wdProofLoading = true;
+            try {
+                const snap = await getDocs(query(collection(db, 'withdraw_proofs'), orderBy('paidAt', 'desc'), limit(30)));
+                const arr = snap.docs.map(d => d.data()).filter(p => (Number(p.amount) || 0) > 0);
+                for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+                wdProofList = arr; wdProofIdx = 0; wdProofLoadedAt = Date.now();
+            } catch (err) {
+                console.warn('withdraw proofs load error:', err.message);
+            }
+            wdProofLoading = false;
+        }
+
+        function wdHideToast() {
+            clearTimeout(wdHideTimer);
+            const box = document.querySelector('#wd-proof-toast');
+            const el = box && box.firstElementChild;
+            if (!el) return;
+            el.classList.remove('show');
+            setTimeout(() => { if (el.parentNode) el.remove(); }, 400);
+        }
+
+        function wdShowToast(p) {
+            let box = document.querySelector('#wd-proof-toast');
+            if (!box) { box = document.createElement('div'); box.id = 'wd-proof-toast'; document.body.appendChild(box); }
+            box.innerHTML = '';
+            const tag = wdMethodTag(p.method);
+            const initial = esc(String(p.name || 'U').trim().charAt(0).toUpperCase() || 'U');
+            const avatar = p.photoURL
+                ? `<img src="${esc(p.photoURL)}" alt="" onerror="this.outerHTML='<div>${initial}</div>'">`
+                : `<div>${initial}</div>`;
+            const el = document.createElement('div');
+            el.className = 'wd-toast';
+            el.innerHTML = `
+                <div class="wd-toast__av">${avatar}</div>
+                <div class="wd-toast__body">
+                    <p class="wd-toast__name">${esc(p.name || 'ইউজার')}</p>
+                    <p class="wd-toast__msg">সফলভাবে <b>৳${Number(p.amount).toLocaleString('en-US')}</b> উত্তোলন করেছেন।</p>
+                    <p class="wd-toast__acc"><b style="color:${tag.c}">${esc(tag.t)}</b> • <span class="font-en">${esc(p.maskedAccount || '')}</span></p>
+                    <p class="wd-toast__time"><span class="wd-toast__dot"></span>${esc(wdRelTime(p.paidAt))}</p>
+                </div>
+                <button type="button" class="wd-toast__x" aria-label="বন্ধ করুন">✕</button>`;
+            el.querySelector('.wd-toast__x').addEventListener('click', wdHideToast);
+            box.appendChild(el);
+            requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+            clearTimeout(wdHideTimer);
+            wdHideTimer = setTimeout(wdHideToast, 6000);
+        }
+
+        async function wdProofTick() {
+            if (!wdProofRunning) return;
+            if (!currentUser || (window.location.hash.split('?')[0] !== '#withdraw')) { stopWithdrawProofToasts(); return; }
+            // লিস্ট শেষ হলে বা ২ মিনিট পার হলে নতুন করে লোড
+            if (!wdProofList.length || wdProofIdx >= wdProofList.length || Date.now() - wdProofLoadedAt > 120000) {
+                await wdLoadProofs();
+                if (!wdProofRunning) return;
+            }
+            if (wdProofList.length) {
+                wdShowToast(wdProofList[wdProofIdx % wdProofList.length]);
+                wdProofIdx++;
+            }
+            // পরের পপআপ: ১০-১৫ সেকেন্ড পর
+            wdProofTimer = setTimeout(wdProofTick, 10000 + Math.random() * 5000);
+        }
+
+        function startWithdrawProofToasts() {
+            if (wdProofRunning || !currentUser) return;
+            wdProofRunning = true;
+            wdProofTimer = setTimeout(wdProofTick, 2500);
+        }
+
+        function stopWithdrawProofToasts() {
+            wdProofRunning = false;
+            clearTimeout(wdProofTimer);
+            wdHideToast();
+        }
+
         function myReferCodeFallback() {
             return currentUser ? currentUser.uid.slice(-8).toUpperCase() : '------';
         }
@@ -4308,6 +4480,7 @@
 
                 const docsList = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
                 docsList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                syncWithdrawProofs(docsList);
 
                 container.innerHTML = docsList.map(w => {
                     const isApproved = w.status === 'paid' || w.status === 'approved';
