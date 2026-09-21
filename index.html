@@ -258,7 +258,87 @@
             box-shadow:0 12px 26px -8px rgba(0,0,0,.7), 0 0 0 1px rgba(37,244,238,.4) inset, 0 0 12px rgba(254,44,85,.35);
         }
     </style>
-<script src="https://apis.google.com/js/api.js?onload=__iframefcb952524" type="text/javascript" charset="UTF-8" gapi_processed="true"></script></head>
+<script src="https://apis.google.com/js/api.js?onload=__iframefcb952524" type="text/javascript" charset="UTF-8" gapi_processed="true"></script><style id="lb-podium-css">
+/* ===== রেফার লিডারবোর্ড: গোল্ডেন / সিলভার / ব্রোঞ্জ কার্ড ===== */
+.lb-card{
+    --ink:#3b2604; --ink-soft:rgba(59,38,4,.72);
+    position:relative; flex:1 1 0%; min-width:0; overflow:hidden; isolation:isolate;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    border-radius:22px; padding:14px 6px 14px; color:var(--ink);
+    border:1.5px solid var(--edge);
+    background:var(--bg);
+    box-shadow:0 14px 28px -10px var(--glow), 0 2px 0 rgba(255,255,255,.08),
+               inset 0 1.5px 0 rgba(255,255,255,.85), inset 0 -14px 22px var(--shade);
+}
+/* উপরের কাঁচের মতো হাইলাইট */
+.lb-card::before{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,.12) 32%, rgba(255,255,255,0) 55%);
+    border-radius:inherit;
+}
+/* চলমান ঝলক (shine) */
+.lb-card::after{
+    content:""; position:absolute; top:-30%; left:-60%; width:45%; height:170%; z-index:0; pointer-events:none;
+    background:linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
+    transform:rotate(18deg); animation:lbShine 5.5s ease-in-out infinite;
+}
+.lb-card > *{ position:relative; z-index:1; }
+@keyframes lbShine{ 0%{left:-60%} 45%,100%{left:140%} }
+
+.lb-card--gold{
+    --ink:#4a2c00; --edge:#fff1a6; --glow:rgba(251,191,36,.65); --shade:rgba(146,84,0,.38);
+    --bg:linear-gradient(150deg,#fff6bf 0%,#fbd44e 20%,#e0a11b 50%,#fae07f 74%,#c58610 100%);
+    padding-top:16px; padding-bottom:18px;
+}
+.lb-card--silver{
+    --ink:#1e293b; --edge:#f1f5f9; --glow:rgba(203,213,225,.45); --shade:rgba(71,85,105,.4);
+    --bg:linear-gradient(150deg,#ffffff 0%,#e3e9f1 22%,#a4afbf 52%,#eef2f7 76%,#8391a5 100%);
+    --ink-soft:rgba(30,41,59,.72);
+}
+.lb-card--bronze{
+    --ink:#3a1606; --edge:#ffd9b5; --glow:rgba(234,138,72,.5); --shade:rgba(110,45,10,.42);
+    --bg:linear-gradient(150deg,#ffe4c8 0%,#f3a869 22%,#bd6a30 52%,#f0a870 76%,#8f4a1c 100%);
+    --ink-soft:rgba(58,22,6,.72);
+}
+.lb-card--empty{ filter:saturate(.75) brightness(.8); }
+.lb-card--empty::after{ display:none; }
+.lb-card--me{ outline:2px solid rgba(34,211,238,.85); outline-offset:2px; }
+
+/* মুকুট / মেডেল ইমব্লেম */
+.lb-emblem{
+    width:30px; height:30px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%,#2a2a2a,#000 78%);
+    border:2px solid var(--edge);
+    box-shadow:0 3px 8px rgba(0,0,0,.45), inset 0 0 6px rgba(255,255,255,.12);
+}
+.lb-emblem i{
+    font-size:14px;
+    background:var(--bg); -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.5));
+}
+.lb-card--gold .lb-emblem{ width:38px; height:38px; }
+.lb-card--gold .lb-emblem i{ font-size:18px; }
+
+/* অবতার রিং */
+.lb-avatar{
+    padding:3px; border-radius:9999px; margin-top:10px;
+    background:linear-gradient(145deg,#ffffff,var(--edge) 40%,rgba(0,0,0,.35));
+    box-shadow:0 6px 14px rgba(0,0,0,.35);
+}
+.lb-avatar > *{ border:2px solid rgba(255,255,255,.9); }
+.lb-card--gold .lb-avatar{ padding:4px; margin-top:12px; }
+
+.lb-name{ font-size:11px; font-weight:800; color:var(--ink); width:100%; padding:0 4px; margin-top:10px;
+          overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 1px 0 rgba(255,255,255,.45); }
+.lb-you{ margin-top:3px; padding:1px 8px; border-radius:9999px; font-size:9px; font-weight:800;
+         background:rgba(2,6,23,.78); color:#67e8f9; }
+.lb-count{ font-family:Inter,sans-serif; font-weight:900; line-height:1.05; margin-top:4px; color:var(--ink);
+           font-size:24px; text-shadow:0 1px 0 rgba(255,255,255,.55), 0 2px 4px rgba(0,0,0,.18); }
+.lb-card--gold .lb-count{ font-size:34px; }
+.lb-label{ font-size:9px; font-weight:800; color:var(--ink-soft); letter-spacing:.04em; text-transform:uppercase; }
+.lb-empty-txt{ margin-top:10px; font-size:10px; font-weight:800; color:var(--ink-soft); }
+</style>
+</head>
 <body class="text-slate-100 min-h-screen pb-24 max-w-md mx-auto shadow-2xl relative flex flex-col justify-between border-x border-white/10">
 
     <!-- TOP HEADER -->
@@ -3948,41 +4028,30 @@
         }
 
         // রেফার লিডারবোর্ড: টপ ৫ — ১/২/৩ পডিয়ামে হাইলাইট, ৪/৫ সাধারণ সারিতে
-        // পডিয়ামের র‍্যাঙ্ক ব্যাজ (১/২/৩) — সোনালি/রুপালি/ব্রোঞ্জ মেডেল স্টাইল
-        function rankBadge(rank) {
-            const t = {
-                1: { size: 'w-8 h-8 text-base', bg: 'linear-gradient(145deg,#fff7c2 0%,#fbbf24 45%,#d97706 100%)', edge: '#fde68a', glow: 'rgba(251,191,36,.75)', ink: '#78350f' },
-                2: { size: 'w-7 h-7 text-sm', bg: 'linear-gradient(145deg,#ffffff 0%,#cbd5e1 50%,#64748b 100%)', edge: '#e2e8f0', glow: 'rgba(203,213,225,.55)', ink: '#1e293b' },
-                3: { size: 'w-7 h-7 text-sm', bg: 'linear-gradient(145deg,#ffe0c2 0%,#fb923c 50%,#9a3412 100%)', edge: '#fdba74', glow: 'rgba(251,146,60,.6)', ink: '#431407' }
-            }[rank];
-            return `<span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 ${t.size} rounded-full flex items-center justify-center font-black font-en leading-none select-none" style="background:${t.bg};color:${t.ink};text-shadow:0 1px 0 rgba(255,255,255,.55);box-shadow:0 0 0 2px #0f172a,0 0 0 3.5px ${t.edge},0 5px 14px ${t.glow},inset 0 1px 2px rgba(255,255,255,.7)">${rank}</span>`;
-        }
-
+        // পডিয়াম কার্ড: ১ম = গোল্ডেন, ২য় = সিলভার, ৩য় = ব্রোঞ্জ (স্টাইল উপরের .lb-card CSS এ)
         function podiumCol(u, rank) {
-            const slot = {
-                1: { pad: 'pt-4 pb-5', box: 'bg-gradient-to-b from-amber-400/35 via-yellow-500/15 to-amber-700/10 border-amber-300/80 shadow-xl shadow-amber-500/30', ring: 'ring-4 ring-amber-300/90', av: 'w-16 h-16', txt: 'text-xl', icon: '<i class="fa-solid fa-crown text-amber-300 text-2xl animate-bounce-slow drop-shadow"></i>', cnt: 'text-amber-300 text-3xl', badge: 'bg-gradient-to-br from-amber-200 to-yellow-500 text-slate-900', empty: 'py-9' },
-                2: { pad: 'pt-3 pb-4', box: 'bg-gradient-to-b from-slate-200/25 via-slate-400/10 to-slate-600/5 border-slate-200/60 shadow-lg shadow-slate-300/10', ring: 'ring-2 ring-slate-200', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-slate-200 text-xl"></i>', cnt: 'text-slate-100 text-xl', badge: 'bg-gradient-to-br from-slate-100 to-slate-400 text-slate-900', empty: 'py-6' },
-                3: { pad: 'pt-3 pb-4', box: 'bg-gradient-to-b from-orange-400/25 via-orange-600/10 to-amber-900/5 border-orange-400/60 shadow-lg shadow-orange-500/10', ring: 'ring-2 ring-orange-400', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-orange-400 text-xl"></i>', cnt: 'text-orange-300 text-xl', badge: 'bg-gradient-to-br from-orange-300 to-orange-500 text-slate-900', empty: 'py-6' }
+            const t = {
+                1: { cls: 'lb-card--gold',   icon: 'fa-crown', av: 'w-16 h-16', txt: 'text-xl'    },
+                2: { cls: 'lb-card--silver', icon: 'fa-medal', av: 'w-12 h-12', txt: 'text-base' },
+                3: { cls: 'lb-card--bronze', icon: 'fa-medal', av: 'w-12 h-12', txt: 'text-base' }
             }[rank];
+            const emblem = `<div class="lb-emblem"><i class="fa-solid ${t.icon}"></i></div>`;
             if (!u) {
                 return `
-                <div class="flex-1 min-w-0 flex flex-col items-center justify-center text-center rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-1.5 ${slot.empty}">
-                    <div class="w-11 h-11 rounded-full bg-slate-800/70 flex items-center justify-center text-slate-500 text-base font-black font-en">${rank}</div>
-                    <p class="text-[10px] text-slate-500 mt-2">এখনো খালি</p>
+                <div class="lb-card ${t.cls} lb-card--empty" style="padding-top:26px;padding-bottom:26px">
+                    ${emblem}
+                    <p class="lb-empty-txt">এখনো খালি</p>
                 </div>`;
             }
             const me = currentUser && u.uid === currentUser.uid;
             return `
-            <div class="flex-1 min-w-0 flex flex-col items-center text-center rounded-2xl border px-1.5 ${slot.pad} ${slot.box} ${me ? 'outline outline-2 outline-cyan-400/80 outline-offset-2' : ''}">
-                ${slot.icon}
-                <div class="relative mt-2 ${rank === 1 ? 'mb-6' : 'mb-5'}">
-                    <div class="${slot.ring} rounded-full">${lbAvatarHtml(u, slot.av, slot.txt)}</div>
-                    ${rankBadge(rank)}
-                </div>
-                <p class="text-[11px] font-bold text-white truncate w-full">${esc(u.name || 'ইউজার')}</p>
-                ${me ? '<span class="mt-0.5 px-1.5 py-px rounded-full bg-cyan-400/20 text-cyan-300 text-[9px] font-bold">আপনি</span>' : ''}
-                <p class="font-black font-en leading-tight mt-1 ${slot.cnt}">${Number(u.count) || 0}</p>
-                <p class="text-[9px] text-slate-300 uppercase font-bold">রেফার</p>
+            <div class="lb-card ${t.cls} ${me ? 'lb-card--me' : ''}">
+                ${emblem}
+                <div class="lb-avatar">${lbAvatarHtml(u, t.av, t.txt)}</div>
+                <p class="lb-name">${esc(u.name || 'ইউজার')}</p>
+                ${me ? '<span class="lb-you">আপনি</span>' : ''}
+                <p class="lb-count">${Number(u.count) || 0}</p>
+                <p class="lb-label">রেফার</p>
             </div>`;
         }
 
