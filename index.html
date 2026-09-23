@@ -258,125 +258,32 @@
             box-shadow:0 12px 26px -8px rgba(0,0,0,.7), 0 0 0 1px rgba(37,244,238,.4) inset, 0 0 12px rgba(254,44,85,.35);
         }
     </style>
-<script src="https://apis.google.com/js/api.js?onload=__iframefcb952524" type="text/javascript" charset="UTF-8" gapi_processed="true"></script><style id="lb-podium-css">
-/* ===== রেফার লিডারবোর্ড: গোল্ডেন / সিলভার / ব্রোঞ্জ কার্ড ===== */
-.lb-card{
-    --ink:#3b2604; --ink-soft:rgba(59,38,4,.72);
-    position:relative; flex:1 1 0%; min-width:0; overflow:hidden; isolation:isolate;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
-    border-radius:22px; padding:14px 6px 14px; color:var(--ink);
-    border:1.5px solid var(--edge);
-    background:var(--bg);
-    box-shadow:0 14px 28px -10px var(--glow), 0 2px 0 rgba(255,255,255,.08),
-               inset 0 1.5px 0 rgba(255,255,255,.85), inset 0 -14px 22px var(--shade);
-}
-/* উপরের কাঁচের মতো হাইলাইট */
-.lb-card::before{
-    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
-    background:linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,.12) 32%, rgba(255,255,255,0) 55%);
-    border-radius:inherit;
-}
-/* চলমান ঝলক (shine) */
-.lb-card::after{
-    content:""; position:absolute; top:-30%; left:-60%; width:45%; height:170%; z-index:0; pointer-events:none;
-    background:linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
-    transform:rotate(18deg); animation:lbShine 5.5s ease-in-out infinite;
-}
-.lb-card > *{ position:relative; z-index:1; }
-@keyframes lbShine{ 0%{left:-60%} 45%,100%{left:140%} }
-
-.lb-card--gold{
-    --ink:#4a2c00; --edge:#fff1a6; --glow:rgba(251,191,36,.65); --shade:rgba(146,84,0,.38);
-    --bg:linear-gradient(150deg,#fff6bf 0%,#fbd44e 20%,#e0a11b 50%,#fae07f 74%,#c58610 100%);
-    padding-top:16px; padding-bottom:18px;
-}
-.lb-card--silver{
-    --ink:#1e293b; --edge:#f1f5f9; --glow:rgba(203,213,225,.45); --shade:rgba(71,85,105,.4);
-    --bg:linear-gradient(150deg,#ffffff 0%,#e3e9f1 22%,#a4afbf 52%,#eef2f7 76%,#8391a5 100%);
-    --ink-soft:rgba(30,41,59,.72);
-}
-.lb-card--bronze{
-    --ink:#3a1606; --edge:#ffd9b5; --glow:rgba(234,138,72,.5); --shade:rgba(110,45,10,.42);
-    --bg:linear-gradient(150deg,#ffe4c8 0%,#f3a869 22%,#bd6a30 52%,#f0a870 76%,#8f4a1c 100%);
-    --ink-soft:rgba(58,22,6,.72);
-}
-.lb-card--empty{ filter:saturate(.75) brightness(.8); }
-.lb-card--empty::after{ display:none; }
-.lb-card--me{ outline:2px solid rgba(34,211,238,.85); outline-offset:2px; }
-
-/* মুকুট / মেডেল ইমব্লেম */
-.lb-emblem{
-    width:30px; height:30px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
-    background:radial-gradient(circle at 35% 30%,#2a2a2a,#000 78%);
-    border:2px solid var(--edge);
-    box-shadow:0 3px 8px rgba(0,0,0,.45), inset 0 0 6px rgba(255,255,255,.12);
-}
-.lb-emblem i{
-    font-size:14px;
-    background:var(--bg); -webkit-background-clip:text; background-clip:text; color:transparent;
-    filter:drop-shadow(0 1px 1px rgba(0,0,0,.5));
-}
-.lb-card--gold .lb-emblem{ width:38px; height:38px; }
-.lb-card--gold .lb-emblem i{ font-size:18px; }
-
-/* অবতার রিং */
-.lb-avatar{
-    padding:3px; border-radius:9999px; margin-top:10px;
-    background:linear-gradient(145deg,#ffffff,var(--edge) 40%,rgba(0,0,0,.35));
-    box-shadow:0 6px 14px rgba(0,0,0,.35);
-}
-.lb-avatar > *{ border:2px solid rgba(255,255,255,.9); }
-.lb-card--gold .lb-avatar{ padding:4px; margin-top:12px; }
-
-.lb-name{ font-size:11px; font-weight:800; color:var(--ink); width:100%; padding:0 4px; margin-top:10px;
-          overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 1px 0 rgba(255,255,255,.45); }
-.lb-you{ margin-top:3px; padding:1px 8px; border-radius:9999px; font-size:9px; font-weight:800;
-         background:rgba(2,6,23,.78); color:#67e8f9; }
-.lb-count{ font-family:Inter,sans-serif; font-weight:900; line-height:1.05; margin-top:4px; color:var(--ink);
-           font-size:24px; text-shadow:0 1px 0 rgba(255,255,255,.55), 0 2px 4px rgba(0,0,0,.18); }
-.lb-card--gold .lb-count{ font-size:34px; }
-.lb-label{ font-size:9px; font-weight:800; color:var(--ink-soft); letter-spacing:.04em; text-transform:uppercase; }
-.lb-empty-txt{ margin-top:10px; font-size:10px; font-weight:800; color:var(--ink-soft); }
-</style>
-<style id="wd-proof-css">
-/* ===== উইথড্র পেজের লাইভ "সফল উইথড্র" পপআপ ===== */
-#wd-proof-toast{
-    position:fixed; left:12px; right:12px; z-index:45; pointer-events:none;
-    bottom:calc(env(safe-area-inset-bottom,0px) + 92px);
-    display:flex; justify-content:center;
-}
-.wd-toast{
-    pointer-events:auto; width:100%; max-width:420px; position:relative;
-    display:flex; align-items:center; gap:14px;
-    background:#fff; color:#0f172a; border-radius:20px; padding:14px 40px 14px 14px;
-    box-shadow:0 18px 40px -12px rgba(0,0,0,.55), 0 0 0 1px rgba(15,23,42,.06);
-    opacity:0; transform:translateY(24px) scale(.97);
-    transition:opacity .35s ease, transform .35s cubic-bezier(.2,.9,.3,1.2);
-}
-.wd-toast.show{ opacity:1; transform:translateY(0) scale(1); }
-.wd-toast__av{
-    width:56px; height:56px; flex:none; border-radius:9999px; padding:2.5px;
-    background:linear-gradient(145deg,#ffe28a,#f0a91c 55%,#b9770e);
-}
-.wd-toast__av > *{
-    box-sizing:border-box; width:100%; height:100%; border-radius:9999px; object-fit:cover; background:#dbeafe;
-    border:2px solid #fff; display:flex; align-items:center; justify-content:center;
-    font-weight:900; font-size:20px; color:#1e3a8a;
-}
-.wd-toast__body{ min-width:0; flex:1; line-height:1.3; }
-.wd-toast__name{ font-size:15px; font-weight:800; color:#0f172a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.wd-toast__msg{ font-size:12.5px; color:#475569; margin-top:2px; }
-.wd-toast__msg b{ color:#15803d; font-size:14px; font-weight:900; font-family:Inter,sans-serif; }
-.wd-toast__acc{ font-size:12px; margin-top:2px; color:#64748b; }
-.wd-toast__acc b{ font-weight:900; }
-.wd-toast__time{ font-size:11px; margin-top:4px; color:#64748b; display:flex; align-items:center; gap:6px; }
-.wd-toast__dot{ width:8px; height:8px; border-radius:9999px; background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.2); flex:none; animation:wdDot 1.6s ease-in-out infinite; }
-@keyframes wdDot{ 50%{ box-shadow:0 0 0 6px rgba(34,197,94,0); } }
-.wd-toast__x{
-    position:absolute; top:10px; right:12px; width:26px; height:26px; border:0; background:transparent;
-    color:#94a3b8; font-size:16px; border-radius:9999px; cursor:pointer;
-}
-.wd-toast__x:active{ background:#f1f5f9; }
+<script src="https://apis.google.com/js/api.js?onload=__iframefcb952524" type="text/javascript" charset="UTF-8" gapi_processed="true"></script>
+<style id="deshipay-style">
+  .dp-hide{display:none!important}
+  .dp-stack{display:flex;flex-direction:column;gap:12px}
+  .dp-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;background:rgba(2,6,23,.75);border:1px solid rgba(255,255,255,.1);border-radius:16px}
+  .dp-tab{padding:11px 8px;border-radius:12px;font-size:11px;font-weight:800;color:#cbd5e1;background:transparent;border:0;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit}
+  .dp-tab.active{background:linear-gradient(90deg,#06b6d4,#2563eb);color:#fff;box-shadow:0 6px 18px rgba(6,182,212,.35)}
+  .dp-tab .dp-tag{font-size:8px;font-weight:900;background:#10b981;color:#022c22;padding:1px 6px;border-radius:99px;letter-spacing:.3px}
+  .dp-card{background:linear-gradient(135deg,rgba(16,185,129,.14),rgba(6,182,212,.12),rgba(37,99,235,.12));border:1px solid rgba(6,182,212,.4);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:12px}
+  .dp-row{display:flex;align-items:center;gap:12px}
+  .dp-ico{width:44px;height:44px;flex-shrink:0;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#facc15;background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.4)}
+  .dp-title{font-weight:900;font-size:14px;color:#fff}
+  .dp-sub{font-size:11px;line-height:1.5;color:#a5f3fc;margin-top:2px}
+  .dp-fee{display:flex;align-items:center;justify-content:space-between;background:rgba(2,6,23,.7);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:11px 14px;font-size:12px;color:#cbd5e1;font-weight:700}
+  .dp-fee b{font-size:20px;color:#fff;font-weight:900}
+  .dp-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .dp-chip{font-size:10px;font-weight:800;padding:5px 11px;border-radius:99px;color:#fff;border:1px solid rgba(255,255,255,.2)}
+  .dp-chip.bk{background:#E2136E}.dp-chip.ng{background:#F7931E}.dp-chip.rk{background:#8C3494}.dp-chip.up{background:#FCD400;color:#1e293b}
+  .dp-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .dp-steps li{display:flex;align-items:center;gap:10px;font-size:11.5px;color:#e2e8f0;background:rgba(2,6,23,.55);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 12px}
+  .dp-steps li i{font-style:normal;flex-shrink:0;width:22px;height:22px;border-radius:50%;background:linear-gradient(90deg,#06b6d4,#2563eb);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center}
+  .dp-btn{width:100%;padding:16px 12px;border:0;border-radius:16px;font-weight:900;font-size:13px;color:#fff;cursor:pointer;background:linear-gradient(90deg,#10b981,#06b6d4 55%,#2563eb);box-shadow:0 10px 28px rgba(16,185,129,.35);transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+  .dp-btn:active{transform:scale(.98)}
+  .dp-btn:disabled{opacity:.6;cursor:not-allowed}
+  .dp-note{display:flex;gap:8px;font-size:10.5px;line-height:1.6;color:#94a3b8;background:rgba(2,6,23,.5);border-radius:12px;padding:10px 12px}
+  .dp-note i{color:#34d399;margin-top:2px}
 </style>
 </head>
 <body class="text-slate-100 min-h-screen pb-24 max-w-md mx-auto shadow-2xl relative flex flex-col justify-between border-x border-white/10">
@@ -970,6 +877,41 @@
 
                 <!-- PAYMENT FORM WRAPPER -->
                 <div id="verify-payment-wrapper" class="space-y-4">
+
+                    <!-- VERIFY MODE TABS (ইনস্ট্যান্ট / ম্যানুয়াল) -->
+                    <div id="verify-mode-tabs" class="dp-tabs dp-hide">
+                        <button type="button" id="vm-tab-instant" class="dp-tab active" onclick="setVerifyMode('instant')"><i class="fa-solid fa-bolt"></i> ইনস্ট্যান্ট <span class="dp-tag">AUTO</span></button>
+                        <button type="button" id="vm-tab-manual" class="dp-tab" onclick="setVerifyMode('manual')"><i class="fa-solid fa-receipt"></i> ম্যানুয়াল</button>
+                    </div>
+
+                    <!-- INSTANT (DeshiPay auto) -->
+                    <div id="verify-instant-section" class="dp-stack dp-hide">
+                        <div class="dp-card">
+                            <div class="dp-row">
+                                <div class="dp-ico"><i class="fa-solid fa-bolt"></i></div>
+                                <div>
+                                    <div class="dp-title">ইনস্ট্যান্ট অটো ভেরিফাই</div>
+                                    <div class="dp-sub">পেমেন্ট শেষ হওয়ার সাথে সাথেই অ্যাকাউন্ট ভেরিফাই — এডমিনের অপেক্ষা নেই।</div>
+                                </div>
+                            </div>
+                            <div class="dp-fee"><span>ভেরিফিকেশন ফি</span><b class="verify-fee-amount-display font-en">৳15</b></div>
+                            <div class="dp-chips">
+                                <span class="dp-chip bk">bKash</span><span class="dp-chip ng">Nagad</span><span class="dp-chip rk">Rocket</span><span class="dp-chip up">Upay</span>
+                            </div>
+                        </div>
+                        <ol class="dp-steps">
+                            <li><i>1</i> নিচের বাটনে ক্লিক করে পেমেন্ট পেজে যান</li>
+                            <li><i>2</i> পছন্দের মেথডে (bKash/Nagad/Rocket/Upay) পেমেন্ট করুন</li>
+                            <li><i>3</i> সাইটে ফিরে এলেই অ্যাকাউন্ট অটো ভেরিফাই ✅</li>
+                        </ol>
+                        <button type="button" id="btn-instant-verify" class="dp-btn" onclick="startInstantVerify()">
+                            <i class="fa-solid fa-bolt"></i> <span>এখনই <span class="verify-fee-amount-display font-en">৳15</span> পেমেন্ট করে ভেরিফাই করুন</span>
+                        </button>
+                        <div class="dp-note"><i class="fa-solid fa-lock"></i> <span>পেমেন্ট নিরাপদ গেটওয়ের মাধ্যমে হয়। টাকা কেটে গেলে অ্যাকাউন্ট নিজে থেকেই ভেরিফাই হবে। কোনো সমস্যা হলে ম্যানুয়াল অপশনে TrxID দিয়ে রিকোয়েস্ট করুন।</span></div>
+                    </div>
+
+                    <!-- MANUAL (আগের সিস্টেম, অপরিবর্তিত) -->
+                    <div id="verify-manual-section" class="space-y-4">
                     <div class="bg-cyan-500/10 border border-cyan-500/30 text-cyan-200 p-3 rounded-xl text-[11px] leading-relaxed font-medium flex gap-2">
                         <i class="fa-solid fa-circle-info text-amber-400 text-base shrink-0 mt-0.5"></i>
                         <span>নিচের নম্বরে বিকাশ/নগদ থেকে <strong class="font-en text-white">৳15</strong> <strong>Send Money</strong> করুন, তারপর আপনার নম্বর ও ট্রানজেকশন আইডি (TrxID) দিয়ে ফর্মটি সাবমিট করুন।</span>
@@ -1032,6 +974,7 @@
                             পেমেন্ট রিকোয়েস্ট সাবমিট করুন
                         </button>
                     </form>
+                    </div><!-- /verify-manual-section -->
                 </div>
             </div>
         </section>
@@ -1791,6 +1734,7 @@
         import { 
             getFirestore, doc, setDoc, onSnapshot, serverTimestamp, addDoc, collection, updateDoc, increment, query, where, getDocs, orderBy, limit, arrayUnion, getDoc, runTransaction 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
 
         // Cloudinary আনসাইনড আপলোড কনফিগারেশন — নিচের দুইটা মান আপনার নিজের Cloudinary অ্যাকাউন্ট থেকে বসাতে হবে
         const CLOUDINARY_CLOUD_NAME = "pvbcsang";
@@ -1815,6 +1759,7 @@
         });
 
         const db = getFirestore(app);
+        const fbFunctions = getFunctions(app, "asia-southeast1"); // DeshiPay Cloud Functions
 
         let currentUser = null;
         let currentUserDoc = null;
@@ -2550,7 +2495,6 @@
                 listenToMyVideoSubmissions();
                 resetVideoEarnForm();
             }
-            if (cleanHash === '#withdraw') startWithdrawProofToasts(); else stopWithdrawProofToasts();
             if (cleanHash === '#inbox') {
                 localStorage.setItem('inbox_last_seen', Date.now().toString());
                 document.querySelector('#inbox-red-light')?.classList.add('hidden');
@@ -2812,10 +2756,13 @@
                     verifyVerifiedEl.classList.remove('hidden');
                 } else if (data.accountStatus === 'pending') {
                     verifyPendingEl.classList.remove('hidden');
+                    if (AUTO_PAY_ENABLED) verifyFormWrapperEl.classList.remove('hidden'); // পেন্ডিং থাকলেও ইনস্ট্যান্টে সাথে সাথে ভেরিফাই করা যাবে
                 } else {
                     verifyFormWrapperEl.classList.remove('hidden');
                 }
             }
+
+            applyVerifyModeUI();
 
             selectHistoryMetric('total_withdraw');
         }
@@ -4069,30 +4016,41 @@
         }
 
         // রেফার লিডারবোর্ড: টপ ৫ — ১/২/৩ পডিয়ামে হাইলাইট, ৪/৫ সাধারণ সারিতে
-        // পডিয়াম কার্ড: ১ম = গোল্ডেন, ২য় = সিলভার, ৩য় = ব্রোঞ্জ (স্টাইল উপরের .lb-card CSS এ)
-        function podiumCol(u, rank) {
+        // পডিয়ামের র‍্যাঙ্ক ব্যাজ (১/২/৩) — সোনালি/রুপালি/ব্রোঞ্জ মেডেল স্টাইল
+        function rankBadge(rank) {
             const t = {
-                1: { cls: 'lb-card--gold',   icon: 'fa-crown', av: 'w-16 h-16', txt: 'text-xl'    },
-                2: { cls: 'lb-card--silver', icon: 'fa-medal', av: 'w-12 h-12', txt: 'text-base' },
-                3: { cls: 'lb-card--bronze', icon: 'fa-medal', av: 'w-12 h-12', txt: 'text-base' }
+                1: { size: 'w-8 h-8 text-base', bg: 'linear-gradient(145deg,#fff7c2 0%,#fbbf24 45%,#d97706 100%)', edge: '#fde68a', glow: 'rgba(251,191,36,.75)', ink: '#78350f' },
+                2: { size: 'w-7 h-7 text-sm', bg: 'linear-gradient(145deg,#ffffff 0%,#cbd5e1 50%,#64748b 100%)', edge: '#e2e8f0', glow: 'rgba(203,213,225,.55)', ink: '#1e293b' },
+                3: { size: 'w-7 h-7 text-sm', bg: 'linear-gradient(145deg,#ffe0c2 0%,#fb923c 50%,#9a3412 100%)', edge: '#fdba74', glow: 'rgba(251,146,60,.6)', ink: '#431407' }
             }[rank];
-            const emblem = `<div class="lb-emblem"><i class="fa-solid ${t.icon}"></i></div>`;
+            return `<span class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 ${t.size} rounded-full flex items-center justify-center font-black font-en leading-none select-none" style="background:${t.bg};color:${t.ink};text-shadow:0 1px 0 rgba(255,255,255,.55);box-shadow:0 0 0 2px #0f172a,0 0 0 3.5px ${t.edge},0 5px 14px ${t.glow},inset 0 1px 2px rgba(255,255,255,.7)">${rank}</span>`;
+        }
+
+        function podiumCol(u, rank) {
+            const slot = {
+                1: { pad: 'pt-4 pb-5', box: 'bg-gradient-to-b from-amber-400/35 via-yellow-500/15 to-amber-700/10 border-amber-300/80 shadow-xl shadow-amber-500/30', ring: 'ring-4 ring-amber-300/90', av: 'w-16 h-16', txt: 'text-xl', icon: '<i class="fa-solid fa-crown text-amber-300 text-2xl animate-bounce-slow drop-shadow"></i>', cnt: 'text-amber-300 text-3xl', badge: 'bg-gradient-to-br from-amber-200 to-yellow-500 text-slate-900', empty: 'py-9' },
+                2: { pad: 'pt-3 pb-4', box: 'bg-gradient-to-b from-slate-200/25 via-slate-400/10 to-slate-600/5 border-slate-200/60 shadow-lg shadow-slate-300/10', ring: 'ring-2 ring-slate-200', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-slate-200 text-xl"></i>', cnt: 'text-slate-100 text-xl', badge: 'bg-gradient-to-br from-slate-100 to-slate-400 text-slate-900', empty: 'py-6' },
+                3: { pad: 'pt-3 pb-4', box: 'bg-gradient-to-b from-orange-400/25 via-orange-600/10 to-amber-900/5 border-orange-400/60 shadow-lg shadow-orange-500/10', ring: 'ring-2 ring-orange-400', av: 'w-12 h-12', txt: 'text-base', icon: '<i class="fa-solid fa-medal text-orange-400 text-xl"></i>', cnt: 'text-orange-300 text-xl', badge: 'bg-gradient-to-br from-orange-300 to-orange-500 text-slate-900', empty: 'py-6' }
+            }[rank];
             if (!u) {
                 return `
-                <div class="lb-card ${t.cls} lb-card--empty" style="padding-top:26px;padding-bottom:26px">
-                    ${emblem}
-                    <p class="lb-empty-txt">এখনো খালি</p>
+                <div class="flex-1 min-w-0 flex flex-col items-center justify-center text-center rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-1.5 ${slot.empty}">
+                    <div class="w-11 h-11 rounded-full bg-slate-800/70 flex items-center justify-center text-slate-500 text-base font-black font-en">${rank}</div>
+                    <p class="text-[10px] text-slate-500 mt-2">এখনো খালি</p>
                 </div>`;
             }
             const me = currentUser && u.uid === currentUser.uid;
             return `
-            <div class="lb-card ${t.cls} ${me ? 'lb-card--me' : ''}">
-                ${emblem}
-                <div class="lb-avatar">${lbAvatarHtml(u, t.av, t.txt)}</div>
-                <p class="lb-name">${esc(u.name || 'ইউজার')}</p>
-                ${me ? '<span class="lb-you">আপনি</span>' : ''}
-                <p class="lb-count">${Number(u.count) || 0}</p>
-                <p class="lb-label">রেফার</p>
+            <div class="flex-1 min-w-0 flex flex-col items-center text-center rounded-2xl border px-1.5 ${slot.pad} ${slot.box} ${me ? 'outline outline-2 outline-cyan-400/80 outline-offset-2' : ''}">
+                ${slot.icon}
+                <div class="relative mt-2 ${rank === 1 ? 'mb-6' : 'mb-5'}">
+                    <div class="${slot.ring} rounded-full">${lbAvatarHtml(u, slot.av, slot.txt)}</div>
+                    ${rankBadge(rank)}
+                </div>
+                <p class="text-[11px] font-bold text-white truncate w-full">${esc(u.name || 'ইউজার')}</p>
+                ${me ? '<span class="mt-0.5 px-1.5 py-px rounded-full bg-cyan-400/20 text-cyan-300 text-[9px] font-bold">আপনি</span>' : ''}
+                <p class="font-black font-en leading-tight mt-1 ${slot.cnt}">${Number(u.count) || 0}</p>
+                <p class="text-[9px] text-slate-300 uppercase font-bold">রেফার</p>
             </div>`;
         }
 
@@ -4133,137 +4091,6 @@
                 referLbListening = false;
                 if (box) box.innerHTML = '<div class="text-center py-8 text-xs text-rose-300 glass-card rounded-3xl border border-white/20">লিডারবোর্ড লোড করা যায়নি।</div>';
             });
-        }
-
-        // ================= উইথড্র পেজে "সফল উইথড্র" লাইভ পপআপ (১০-১৫ সেকেন্ড পর পর) =================
-        // সম্পূর্ণ রিয়েল ডেটা: শুধু সত্যিকারের পেইড/অ্যাপ্রুভড উইথড্র, নম্বর মাস্ক করা।
-        // ডেটা থাকে পাবলিক কালেকশন `withdraw_proofs` এ (আসল `withdrawals` কালেকশন প্রাইভেটই থাকে)।
-        let wdProofRunning = false, wdProofTimer = null, wdHideTimer = null;
-        let wdProofList = [], wdProofIdx = 0, wdProofLoadedAt = 0, wdProofLoading = false;
-
-        function wdMaskAccount(no) {
-            const d = String(no || '').replace(/\D/g, '');
-            return d.length >= 7 ? d.slice(0, 3) + '****' + d.slice(-4) : '****';
-        }
-
-        function wdMethodTag(method) {
-            const m = String(method || '').toLowerCase();
-            if (m === 'bkash') return { t: 'বিকাশ', c: '#d12b7e' };
-            if (m === 'nagad') return { t: 'নগদ', c: '#f26b21' };
-            if (m === 'rocket') return { t: 'রকেট', c: '#8c3494' };
-            return { t: String(method || 'পেমেন্ট').toUpperCase(), c: '#0e7490' };
-        }
-
-        function wdRelTime(ts) {
-            const bn = (n) => n.toLocaleString('bn-BD');
-            const sec = ts && ts.seconds ? Math.max(0, Math.floor(Date.now() / 1000 - ts.seconds)) : null;
-            if (sec === null) return 'সফল হয়েছে';
-            if (sec < 120) return 'মাত্র সফল হয়েছে';
-            if (sec < 3600) return `${bn(Math.floor(sec / 60))} মিনিট আগে সফল হয়েছে`;
-            if (sec < 86400) return `${bn(Math.floor(sec / 3600))} ঘণ্টা আগে সফল হয়েছে`;
-            return `${bn(Math.floor(sec / 86400))} দিন আগে সফল হয়েছে`;
-        }
-
-        // ইউজারের নিজের পেইড উইথড্র দেখলে সেটার মাস্ক করা প্রুফ পাবলিক কালেকশনে রাখা (ডক আইডি = উইথড্র আইডি, তাই ডুপ্লিকেট হয় না)
-        function syncWithdrawProofs(list) {
-            if (!currentUser || !list || !list.length) return;
-            const key = `wd_proof_synced_${currentUser.uid}`;
-            let done = [];
-            try { done = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { done = []; }
-            const todo = list.filter(w => (w.status === 'paid' || w.status === 'approved') && !done.includes(w.id)).slice(0, 5);
-            todo.forEach(w => {
-                const paidAt = w.paidAt || w.approvedAt || w.processedAt || w.updatedAt || w.createdAt || null;
-                setDoc(doc(db, 'withdraw_proofs', w.id), {
-                    userId: currentUser.uid,
-                    name: String(w.userName || currentUserDoc?.fullName || 'ইউজার').slice(0, 40),
-                    photoURL: currentUserDoc?.photoURL || null,
-                    method: String(w.method || ''),
-                    maskedAccount: wdMaskAccount(w.accountNo),
-                    amount: Number(w.amount) || 0,
-                    paidAt: (paidAt && paidAt.seconds) ? paidAt : serverTimestamp()
-                }).then(() => {
-                    done.push(w.id);
-                    try { localStorage.setItem(key, JSON.stringify(done.slice(-100))); } catch (e) {}
-                }).catch((err) => console.warn('withdraw proof sync failed:', err.message));
-            });
-        }
-
-        async function wdLoadProofs() {
-            if (wdProofLoading) return;
-            wdProofLoading = true;
-            try {
-                const snap = await getDocs(query(collection(db, 'withdraw_proofs'), orderBy('paidAt', 'desc'), limit(30)));
-                const arr = snap.docs.map(d => d.data()).filter(p => (Number(p.amount) || 0) > 0);
-                for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
-                wdProofList = arr; wdProofIdx = 0; wdProofLoadedAt = Date.now();
-            } catch (err) {
-                console.warn('withdraw proofs load error:', err.message);
-            }
-            wdProofLoading = false;
-        }
-
-        function wdHideToast() {
-            clearTimeout(wdHideTimer);
-            const box = document.querySelector('#wd-proof-toast');
-            const el = box && box.firstElementChild;
-            if (!el) return;
-            el.classList.remove('show');
-            setTimeout(() => { if (el.parentNode) el.remove(); }, 400);
-        }
-
-        function wdShowToast(p) {
-            let box = document.querySelector('#wd-proof-toast');
-            if (!box) { box = document.createElement('div'); box.id = 'wd-proof-toast'; document.body.appendChild(box); }
-            box.innerHTML = '';
-            const tag = wdMethodTag(p.method);
-            const initial = esc(String(p.name || 'U').trim().charAt(0).toUpperCase() || 'U');
-            const avatar = p.photoURL
-                ? `<img src="${esc(p.photoURL)}" alt="" onerror="this.outerHTML='<div>${initial}</div>'">`
-                : `<div>${initial}</div>`;
-            const el = document.createElement('div');
-            el.className = 'wd-toast';
-            el.innerHTML = `
-                <div class="wd-toast__av">${avatar}</div>
-                <div class="wd-toast__body">
-                    <p class="wd-toast__name">${esc(p.name || 'ইউজার')}</p>
-                    <p class="wd-toast__msg">সফলভাবে <b>৳${Number(p.amount).toLocaleString('en-US')}</b> উত্তোলন করেছেন।</p>
-                    <p class="wd-toast__acc"><b style="color:${tag.c}">${esc(tag.t)}</b> • <span class="font-en">${esc(p.maskedAccount || '')}</span></p>
-                    <p class="wd-toast__time"><span class="wd-toast__dot"></span>${esc(wdRelTime(p.paidAt))}</p>
-                </div>
-                <button type="button" class="wd-toast__x" aria-label="বন্ধ করুন">✕</button>`;
-            el.querySelector('.wd-toast__x').addEventListener('click', wdHideToast);
-            box.appendChild(el);
-            requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
-            clearTimeout(wdHideTimer);
-            wdHideTimer = setTimeout(wdHideToast, 6000);
-        }
-
-        async function wdProofTick() {
-            if (!wdProofRunning) return;
-            if (!currentUser || (window.location.hash.split('?')[0] !== '#withdraw')) { stopWithdrawProofToasts(); return; }
-            // লিস্ট শেষ হলে বা ২ মিনিট পার হলে নতুন করে লোড
-            if (!wdProofList.length || wdProofIdx >= wdProofList.length || Date.now() - wdProofLoadedAt > 120000) {
-                await wdLoadProofs();
-                if (!wdProofRunning) return;
-            }
-            if (wdProofList.length) {
-                wdShowToast(wdProofList[wdProofIdx % wdProofList.length]);
-                wdProofIdx++;
-            }
-            // পরের পপআপ: ১০-১৫ সেকেন্ড পর
-            wdProofTimer = setTimeout(wdProofTick, 10000 + Math.random() * 5000);
-        }
-
-        function startWithdrawProofToasts() {
-            if (wdProofRunning || !currentUser) return;
-            wdProofRunning = true;
-            wdProofTimer = setTimeout(wdProofTick, 2500);
-        }
-
-        function stopWithdrawProofToasts() {
-            wdProofRunning = false;
-            clearTimeout(wdProofTimer);
-            wdHideToast();
         }
 
         function myReferCodeFallback() {
@@ -4480,7 +4307,6 @@
 
                 const docsList = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
                 docsList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                syncWithdrawProofs(docsList);
 
                 container.innerHTML = docsList.map(w => {
                     const isApproved = w.status === 'paid' || w.status === 'approved';
@@ -4728,6 +4554,9 @@
         let WITHDRAW_CHARGE = 5;
         let MEMBERSHIP_BKASH_NUMBER = '';
         let MEMBERSHIP_NAGAD_NUMBER = '';
+        let AUTO_PAY_ENABLED = false;    // settings/general.autoPaymentEnabled
+        let MANUAL_PAY_ENABLED = true;   // settings/general.manualPaymentEnabled
+        let verifyMode = 'instant';
 
         function loadSiteSettings() {
             onSnapshot(doc(db, "settings", "general"), (snap) => {
@@ -4741,6 +4570,8 @@
                     if (typeof s.withdrawCharge === 'number') WITHDRAW_CHARGE = s.withdrawCharge;
                     MEMBERSHIP_BKASH_NUMBER = s.membershipBkashNumber || '';
                     MEMBERSHIP_NAGAD_NUMBER = s.membershipNagadNumber || '';
+                    AUTO_PAY_ENABLED = s.autoPaymentEnabled === true;
+                    MANUAL_PAY_ENABLED = s.manualPaymentEnabled !== false;
                 }
 
                 const referRewardEl = document.querySelector('#refer-reward-amount');
@@ -4763,6 +4594,8 @@
                 }
                 const minNoteEl = document.querySelector('#wd-min-note');
                 if (minNoteEl) minNoteEl.textContent = MIN_WITHDRAW_AMOUNT;
+
+                applyVerifyModeUI();
 
                 // ভেরিফাই-অ্যাকাউন্ট পেজ খোলা থাকলে সিলেক্টেড নম্বর রিফ্রেশ করা
                 if (typeof window.updateVerifyPayNumber === 'function') window.updateVerifyPayNumber();
@@ -4867,6 +4700,120 @@
                 Swal.fire('ত্রুটি!', err.message, 'error');
             }
         };
+
+        
+        // =====================================================================
+        // ==== DeshiPay INSTANT VERIFY (Cloud Functions: asia-southeast1) ====
+        // =====================================================================
+        function applyVerifyModeUI() {
+            const tabs = document.querySelector('#verify-mode-tabs');
+            const inst = document.querySelector('#verify-instant-section');
+            const man = document.querySelector('#verify-manual-section');
+            if (!tabs || !inst || !man) return;
+            const status = currentUserDoc ? currentUserDoc.accountStatus : 'unverified';
+            const autoOn = AUTO_PAY_ENABLED;
+            const manualOn = (MANUAL_PAY_ENABLED || !AUTO_PAY_ENABLED) && status !== 'pending';
+            let mode = verifyMode;
+            if (!autoOn) mode = 'manual';
+            else if (!manualOn) mode = 'instant';
+            verifyMode = mode;
+            tabs.classList.toggle('dp-hide', !(autoOn && manualOn));
+            inst.classList.toggle('dp-hide', !(autoOn && mode === 'instant'));
+            man.classList.toggle('dp-hide', !(manualOn && mode === 'manual'));
+            const ti = document.querySelector('#vm-tab-instant');
+            const tm = document.querySelector('#vm-tab-manual');
+            if (ti) ti.classList.toggle('active', mode === 'instant');
+            if (tm) tm.classList.toggle('active', mode === 'manual');
+        }
+
+        window.setVerifyMode = function(mode) {
+            verifyMode = mode === 'manual' ? 'manual' : 'instant';
+            applyVerifyModeUI();
+        };
+
+        window.startInstantVerify = async function() {
+            if (!currentUser) return Swal.fire('ত্রুটি!', 'লগইন করুন', 'error');
+            if (currentUserDoc && currentUserDoc.accountStatus === 'verified') {
+                return Swal.fire('তথ্য', 'আপনার অ্যাকাউন্ট ইতিমধ্যে ভেরিফাই করা আছে।', 'info');
+            }
+            const btn = document.querySelector('#btn-instant-verify');
+            if (btn) btn.disabled = true;
+            Swal.fire({
+                title: 'পেমেন্ট পেজ খোলা হচ্ছে...',
+                text: 'অনুগ্রহ করে অপেক্ষা করুন',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            try {
+                const res = await httpsCallable(fbFunctions, 'createDeshiPayPayment')({});
+                const url = res && res.data && res.data.paymentUrl;
+                if (!url) throw new Error('পেমেন্ট লিংক পাওয়া যায়নি, আবার চেষ্টা করুন।');
+                window.location.href = url;
+            } catch (err) {
+                if (btn) btn.disabled = false;
+                Swal.fire('ত্রুটি!', err.message || 'কিছু ভুল হয়েছে, আবার চেষ্টা করুন।', 'error');
+            }
+        };
+
+        // পেমেন্ট শেষে গেটওয়ে ইউজারকে সাইটে ফেরত পাঠায়: /?dp=success&transactionId=...&status=...
+        (function initDeshiPayReturn() {
+            const href = window.location.href;
+            const m = href.match(/[?&](?:transactionId|transaction_id|trxID)=([^&#]+)/i);
+            const isCancel = /[?&]dp=cancel/i.test(href);
+            if (!m && !isCancel) return;
+            const txId = m ? decodeURIComponent(m[1]) : null;
+            try { history.replaceState(null, '', window.location.pathname); } catch (e) {}
+
+            let tries = 0;
+            const waiter = setInterval(() => {
+                if (currentUser) { clearInterval(waiter); run(); }
+                else if (++tries > 100) clearInterval(waiter);
+            }, 300);
+
+            async function run() {
+                window.location.hash = '#verify-account';
+                if (!txId) {
+                    Swal.fire({ icon: 'info', title: 'পেমেন্ট বাতিল', text: 'আপনি পেমেন্ট সম্পন্ন করেননি। চাইলে আবার চেষ্টা করতে পারেন।', confirmButtonText: 'ঠিক আছে' });
+                    return;
+                }
+                Swal.fire({
+                    title: 'পেমেন্ট যাচাই করা হচ্ছে...',
+                    text: 'অনুগ্রহ করে পেজ বন্ধ করবেন না',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+                const confirmFn = httpsCallable(fbFunctions, 'confirmDeshiPayPayment');
+                for (let i = 0; i < 10; i++) {
+                    try {
+                        const r = await confirmFn({ transactionId: txId });
+                        const state = r && r.data && r.data.state;
+                        if (state === 'verified') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'অ্যাকাউন্ট ভেরিফাই হয়েছে! 🎉',
+                                text: 'পেমেন্ট সফল হয়েছে। এখন সব ফিচার আনলক।',
+                                confirmButtonText: 'ড্যাশবোর্ডে যান'
+                            }).then(() => { window.location.hash = '#dashboard'; });
+                            return;
+                        }
+                        if (state === 'failed') {
+                            Swal.fire('পেমেন্ট সম্পন্ন হয়নি', (r.data && r.data.message) || 'আবার চেষ্টা করুন।', 'error');
+                            return;
+                        }
+                    } catch (err) {
+                        Swal.fire('ত্রুটি!', err.message || 'যাচাই করা যায়নি।', 'error');
+                        return;
+                    }
+                    await new Promise(res => setTimeout(res, 3000)); // pending — আবার চেক
+                }
+                Swal.fire({
+                    icon: 'info',
+                    title: 'পেমেন্ট প্রসেস হচ্ছে',
+                    text: 'গেটওয়ে থেকে কনফার্মেশন আসামাত্র আপনার অ্যাকাউন্ট নিজে থেকেই ভেরিফাই হয়ে যাবে।',
+                    confirmButtonText: 'ঠিক আছে'
+                });
+            }
+        })();
 
         // ===== WITHDRAW UI: payment-method selector + live summary =====
         (function initWithdrawUI() {
