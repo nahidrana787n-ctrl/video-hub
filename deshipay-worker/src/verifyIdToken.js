@@ -1,7 +1,7 @@
 import { decodeProtectedHeader, importX509, jwtVerify } from "jose";
 
 const CERTS_URL =
-  "https://www.googleapis.com/robot/v1/metadata/x509/[email protected]";
+  "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
 
 let certCache = { certs: null, exp: 0 };
 
