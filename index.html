@@ -1734,6 +1734,8 @@
         import { 
             getFirestore, doc, setDoc, onSnapshot, serverTimestamp, addDoc, collection, updateDoc, increment, query, where, getDocs, orderBy, limit, arrayUnion, getDoc, runTransaction 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js";
+
         // Cloudinary আনসাইনড আপলোড কনফিগারেশন — নিচের দুইটা মান আপনার নিজের Cloudinary অ্যাকাউন্ট থেকে বসাতে হবে
         const CLOUDINARY_CLOUD_NAME = "pvbcsang";
         const CLOUDINARY_UPLOAD_PRESET = "task_proofs";
@@ -1757,9 +1759,25 @@
         });
 
         const db = getFirestore(app);
-        // এখানে আপনার Cloudflare Worker deploy করার পর যে URL পাবেন সেটা বসান
-        // (https://<name>.<subdomain>.workers.dev, শেষে স্ল্যাশ ছাড়া)
-        const DESHIPAY_WORKER_URL = "https://deshipay-verify.YOUR-SUBDOMAIN.workers.dev";
+        const DESHIPAY_WORKER_URL = "https://deshipay-verify.deshipay.workers.dev";
+        // DeshiPay Cloudflare Worker call (replaces Firebase Cloud Functions)
+        async function callDeshiPay(path, payload) {
+            if (!currentUser) throw new Error('লগইন করুন');
+            const token = await currentUser.getIdToken();
+            let res;
+            try {
+                res = await fetch(DESHIPAY_WORKER_URL + '/' + path, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify(payload || {})
+                });
+            } catch (e) {
+                throw new Error('সার্ভারের সাথে সংযোগ করা যায়নি, ইন্টারনেট চেক করে আবার চেষ্টা করুন।');
+            }
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'কিছু ভুল হয়েছে, আবার চেষ্টা করুন।');
+            return data;
+        }
 
         let currentUser = null;
         let currentUserDoc = null;
@@ -4745,15 +4763,8 @@
                 didOpen: () => Swal.showLoading()
             });
             try {
-                const idToken = await currentUser.getIdToken();
-                const resp = await fetch(DESHIPAY_WORKER_URL + '/createDeshiPayPayment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
-                    body: JSON.stringify({})
-                });
-                const data = await resp.json();
-                if (!resp.ok) throw new Error(data.error || 'কিছু ভুল হয়েছে, আবার চেষ্টা করুন।');
-                const url = data.paymentUrl;
+                const res = await callDeshiPay('createDeshiPayPayment', {});
+                const url = res && res.paymentUrl;
                 if (!url) throw new Error('পেমেন্ট লিংক পাওয়া যায়নি, আবার চেষ্টা করুন।');
                 window.location.href = url;
             } catch (err) {
@@ -4789,16 +4800,10 @@
                     allowOutsideClick: false,
                     didOpen: () => Swal.showLoading()
                 });
+                const confirmFn = async (p) => ({ data: await callDeshiPay('confirmDeshiPayPayment', p) });
                 for (let i = 0; i < 10; i++) {
                     try {
-                        const idToken = await currentUser.getIdToken();
-                        const resp = await fetch(DESHIPAY_WORKER_URL + '/confirmDeshiPayPayment', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
-                            body: JSON.stringify({ transactionId: txId })
-                        });
-                        const r = { data: await resp.json() };
-                        if (!resp.ok) throw new Error(r.data.error || 'যাচাই করা যায়নি।');
+                        const r = await confirmFn({ transactionId: txId });
                         const state = r && r.data && r.data.state;
                         if (state === 'verified') {
                             Swal.fire({
