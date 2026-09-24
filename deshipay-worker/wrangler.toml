@@ -8,7 +8,7 @@ FIREBASE_PROJECT_ID = "bot-telegram-refar"
 # আপনার প্রথমবার deploy করার পর Cloudflare যে workers.dev URL দেবে সেটা এখানে বসান,
 # তারপর আবার `npm run deploy` চালান। উদাহরণ:
 # WORKER_BASE_URL = "https://deshipay-verify.yourname.workers.dev"
-WORKER_BASE_URL = "https://deshipay-verify.YOUR-SUBDOMAIN.workers.dev"
+WORKER_BASE_URL = "https://deshipay-verify.deshipay.workers.dev"
 
 # গোপন কী (private key ইত্যাদি) কখনো এখানে লিখবেন না — এগুলো secret হিসেবে
 # টার্মিনাল থেকে বসাতে হবে (README দেখুন):
