@@ -108,6 +108,17 @@ async function gatewayPost(cfg, path, body) {
   }
 }
 
+/* Pull the payment URL out of whatever shape the gateway answers with. */
+function pickPaymentUrl(r) {
+  if (!r || typeof r !== "object") return null;
+  const d = r.data && typeof r.data === "object" ? r.data : {};
+  const candidates = [
+    r.payment_url, r.payment_link, r.paymentUrl, r.paymentLink, r.url, r.link,
+    d.payment_url, d.payment_link, d.paymentUrl, d.paymentLink, d.url, d.link,
+  ];
+  return candidates.find((x) => typeof x === "string" && /^https?:\/\//i.test(x)) || null;
+}
+
 /* ------------------------------------------------------------------ */
 /* Core: verify with gateway + finalize (idempotent)                   */
 /* ------------------------------------------------------------------ */
@@ -331,18 +342,28 @@ async function handleCreate(request, env, fs) {
     throw new ApiError(503, "পেমেন্ট গেটওয়ের সাথে সংযোগ করা যায়নি, একটু পরে আবার চেষ্টা করুন।");
   }
 
-  const ok = res && (res.status === true || String(res.status).toLowerCase() === "true");
-  if (!ok || !res.payment_url) {
+  // Accept any success shape: a real payment URL is what matters, unless the gateway says it failed.
+  const payUrl = pickPaymentUrl(res);
+  const st = String(res && res.status).toLowerCase();
+  const explicitFail = ["false", "error", "failed", "fail", "0"].includes(st);
+
+  if (!payUrl || explicitFail) {
+    let raw = "";
+    try {
+      raw = JSON.stringify(res).slice(0, 300);
+    } catch (e) {}
+    console.error("DeshiPay create failed. Gateway said:", raw);
     await fs.commit([
       writeUpdate(`payment_intents/${intentId}`, fs.root, {
         status: "failed",
         error: String((res && res.message) || "no payment_url").slice(0, 200),
       }),
     ]);
-    throw new ApiError(500, (res && res.message) || "পেমেন্ট লিংক তৈরি করা যায়নি।");
+    // TEMP DEBUG: gateway reply is appended so we can see why it was rejected. Remove " [gw: ...]" once fixed.
+    throw new ApiError(500, String((res && res.message) || "পেমেন্ট লিংক তৈরি করা যায়নি।") + " [gw: " + raw.slice(0, 220) + "]");
   }
 
-  return json({ paymentUrl: res.payment_url });
+  return json({ paymentUrl: payUrl });
 }
 
 async function handleConfirm(request, env, fs) {
