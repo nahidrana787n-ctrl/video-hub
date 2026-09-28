@@ -5,6 +5,8 @@
      like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=32fdeb6c-ee4b-45d9-905d-e18bbc3ba547
      Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
 <meta name="hosting-provider" content="Netlify">
+<meta name="theme-color" content="#0f0c29">
+<meta name="color-scheme" content="dark">
 <meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=32fdeb6c-ee4b-45d9-905d-e18bbc3ba547">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>online job - Bangladesh Earning Platform</title>
@@ -310,6 +312,180 @@
   .dpx-btn{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;padding:13px 12px;border-radius:14px}
   #verify-instant-section .dp-note{font-size:10px;padding:8px 10px}
 </style>
+<style id="lp-style">
+/* ===== Landing (login/register) — v2 ===== */
+.lp-top,.lp-bottom{display:none}
+body:has(#view-login:not(.hidden)) .lp-top,body:has(#view-register:not(.hidden)) .lp-top,
+body:has(#view-login:not(.hidden)) .lp-bottom,body:has(#view-register:not(.hidden)) .lp-bottom{display:block},body.lp-on .lp-top,body.lp-on .lp-bottom{display:block}
+body.max-w-md:has(#view-login:not(.hidden)),body.max-w-md:has(#view-register:not(.hidden)),body.max-w-md.lp-on{max-width:820px;overflow-x:hidden}
+body:has(#view-login:not(.hidden)) #app-container,body:has(#view-register:not(.hidden)) #app-container{padding-left:16px;padding-right:16px}
+body:has(#view-login:not(.hidden)):before,body:has(#view-register:not(.hidden)):before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(560px 360px at 88% -5%,rgba(34,211,238,.26),transparent 70%),radial-gradient(500px 340px at 0% 28%,rgba(251,191,36,.12),transparent 70%),radial-gradient(520px 380px at 100% 70%,rgba(244,114,182,.10),transparent 70%)}
+body:has(#view-login:not(.hidden)),body:has(#view-register:not(.hidden)){padding-bottom:0}
+
+/* nav */
+.lp-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 2px 0}
+.lp-brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.04em;font-family:Inter,sans-serif;font-size:17px}
+.lp-brand .lg{width:40px;height:40px;border-radius:50%;overflow:hidden;border:2px solid #22d3ee;box-shadow:0 0 20px rgba(34,211,238,.5)}
+.lp-brand .lg img{width:100%;height:100%;object-fit:cover}
+.lp-brand b{background:linear-gradient(90deg,#67e8f9,#60a5fa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lp-secure{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#a5f3fc;border:1px solid rgba(34,211,238,.35);background:rgba(34,211,238,.08);padding:6px 12px;border-radius:999px;backdrop-filter:blur(6px)}
+.lp-secure i{color:#34d399}
+
+/* hero */
+.lp-hero{position:relative;text-align:center;padding:26px 4px 6px}
+.lp-badge{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:#fde68a;padding:6px 14px;border-radius:999px;background:linear-gradient(90deg,rgba(251,191,36,.16),rgba(244,114,182,.12));border:1px solid rgba(251,191,36,.35);margin-bottom:14px}
+.lp-coins{position:relative;height:96px;width:180px;margin:0 auto 12px}
+.lp-coin{position:absolute;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:#7c2d12;
+ background:radial-gradient(circle at 35% 30%,#fff7d6,#fbbf24 50%,#b45309);box-shadow:0 12px 26px -6px rgba(0,0,0,.7),inset 0 -4px 8px rgba(120,53,15,.5),0 0 0 3px rgba(253,230,138,.25),0 0 36px -4px rgba(251,191,36,.5)}
+.lp-coin.c1{left:2px;top:30px;transform:rotate(-14deg) scale(.82);opacity:.92;animation:lpFloat 4.2s ease-in-out infinite .4s}
+.lp-coin.c2{left:52px;top:0;width:78px;height:78px;font-size:35px;z-index:2;animation:lpFloat 3.4s ease-in-out infinite}
+.lp-coin.c3{right:2px;top:34px;transform:rotate(12deg) scale(.82);opacity:.92;animation:lpFloat 4.6s ease-in-out infinite .9s}
+@keyframes lpFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes lpShine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes lpFade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.lp-hero h1{font-size:clamp(28px,7.4vw,46px);line-height:1.3;font-weight:800;letter-spacing:-.01em;color:#fff;margin:0}
+.lp-hero h1 em{font-style:normal;background:linear-gradient(90deg,#67e8f9,#60a5fa,#f472b6,#fbbf24,#67e8f9);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:lpShine 6s linear infinite}
+.lp-hero p.lp-lead{max-width:480px;margin:12px auto 0;font-size:14.5px;line-height:1.8;color:#bae6fd}
+.lp-cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+.lp-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:16px;font-size:14px;font-weight:800;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s}
+.lp-btn:active{transform:scale(.96)}
+.lp-btn.pri{color:#fff;background:linear-gradient(90deg,#06b6d4,#2563eb 60%,#4f46e5);box-shadow:0 14px 30px -12px rgba(6,182,212,.9)}
+.lp-btn.pri:hover{transform:translateY(-2px);box-shadow:0 18px 34px -12px rgba(6,182,212,1)}
+.lp-btn.sec{color:#e0f2fe;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.2)}
+.lp-btn.sec:hover{background:rgba(255,255,255,.13)}
+.lp-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px}
+.lp-pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#e2e8f0}
+.lp-pill i{color:#22d3ee}
+.lp-hint{margin:22px 0 0;text-align:center;font-size:12px;color:#7dd3fc}
+.lp-hint i{display:block;margin-top:4px;animation:lpFloat 1.8s ease-in-out infinite}
+
+/* auth card */
+#view-login .lp-card,#view-register .lp-card{max-width:470px;margin:0 auto;position:relative;box-shadow:0 30px 70px -25px rgba(0,0,0,.85),0 0 0 1px rgba(34,211,238,.16),0 0 70px -18px rgba(34,211,238,.4)}
+#view-login .lp-card:before,#view-register .lp-card:before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;
+ background:linear-gradient(135deg,rgba(103,232,249,.75),rgba(96,165,250,.15) 40%,rgba(244,114,182,.5));
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+#view-login .lp-card input:focus,#view-register .lp-card input:focus{box-shadow:0 0 0 3px rgba(34,211,238,.18)}
+.lp-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin-bottom:16px;border-radius:16px;background:rgba(2,6,23,.6);border:1px solid rgba(255,255,255,.1)}
+.lp-tabs a{text-align:center;padding:11px 8px;border-radius:12px;font-size:14px;font-weight:800;color:#94a3b8;transition:all .2s;text-decoration:none}
+.lp-tabs a.on{color:#fff;background:linear-gradient(90deg,#06b6d4,#2563eb 60%,#4f46e5);box-shadow:0 8px 20px -8px rgba(6,182,212,.8)}
+.lp-tabs a:focus-visible{outline:2px solid #fbbf24;outline-offset:2px}
+.lp-ttl{text-align:center;margin-bottom:16px}
+.lp-ttl h2{font-size:22px;font-weight:800;color:#fff;margin:0}
+.lp-ttl p{font-size:12px;color:#a5f3fc;margin:3px 0 0}
+
+/* bottom sections */
+.lp-bottom{padding:44px 0 0}
+.lp-sec{margin-bottom:46px}
+.lp-kick{display:block;text-align:center;font-size:11px;font-weight:800;letter-spacing:.14em;color:#22d3ee;text-transform:uppercase;font-family:Inter,sans-serif;margin-bottom:6px}
+.lp-h{text-align:center;font-size:23px;font-weight:800;color:#fff;margin:0 0 4px}
+.lp-sub{text-align:center;font-size:12.5px;color:#93c5fd;margin:0 0 22px}
+.lp-steps{list-style:none;margin:0 auto;padding:0;max-width:540px;position:relative}
+.lp-steps:before{content:"";position:absolute;left:24px;top:30px;bottom:30px;width:2px;background:linear-gradient(#22d3ee,#fbbf24);opacity:.5}
+.lp-steps li{position:relative;display:flex;gap:14px;align-items:flex-start;padding:12px 14px;margin-bottom:8px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);transition:transform .25s,border-color .25s}
+.lp-steps li:hover{transform:translateX(4px);border-color:rgba(34,211,238,.35)}
+.lp-steps .n{flex:0 0 40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-family:Inter,sans-serif;color:#0f172a;background:linear-gradient(135deg,#67e8f9,#22d3ee);box-shadow:0 0 0 4px #1b1a45}
+.lp-steps li:nth-child(3) .n{background:linear-gradient(135deg,#fde68a,#fbbf24)}
+.lp-steps h3{margin:0;font-size:15px;font-weight:800;color:#fff}
+.lp-steps p{margin:2px 0 0;font-size:12.5px;line-height:1.65;color:#a5b4fc}
+.lp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(min-width:640px){.lp-grid{grid-template-columns:repeat(3,1fr)}}
+.lp-f{padding:18px 14px;border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.1);transition:transform .25s,border-color .25s,box-shadow .25s}
+.lp-f:hover{transform:translateY(-4px);border-color:rgba(34,211,238,.4);box-shadow:0 18px 34px -18px rgba(34,211,238,.55)}
+.lp-f .ic{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;background:rgba(34,211,238,.12);color:#22d3ee}
+.lp-f:nth-child(2) .ic,.lp-f:nth-child(5) .ic{background:rgba(251,191,36,.13);color:#fbbf24}
+.lp-f:nth-child(3) .ic,.lp-f:nth-child(6) .ic{background:rgba(244,114,182,.13);color:#f472b6}
+.lp-f h3{margin:0;font-size:14.5px;font-weight:800;color:#fff}
+.lp-f p{margin:4px 0 0;font-size:11.5px;line-height:1.6;color:#94a3b8}
+
+/* payments */
+.lp-pay{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;padding:18px;border-radius:22px;background:linear-gradient(120deg,rgba(2,6,23,.65),rgba(30,27,75,.55));border:1px solid rgba(255,255,255,.12)}
+.lp-pay span.t{font-size:12.5px;font-weight:700;color:#cbd5e1}
+.lp-pay b{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:900;color:#fff;padding:7px 16px 7px 8px;border-radius:14px;font-family:Inter,sans-serif}
+.lp-pay b img{width:26px;height:26px;border-radius:8px;background:#fff;object-fit:contain}
+.lp-pay .bk{background:#E2136E}.lp-pay .ng{background:linear-gradient(90deg,#F7931E,#ED1C24)}
+
+/* reviews */
+.lp-rev-sum{display:flex;align-items:center;justify-content:center;gap:12px;margin:-6px auto 18px;flex-wrap:wrap}
+.lp-rev-sum .avg{font-size:34px;font-weight:900;color:#fff;font-family:Inter,sans-serif;line-height:1}
+.lp-rev-sum .st{color:#fbbf24;letter-spacing:3px;font-size:18px}
+.lp-rev-sum .ct{font-size:11.5px;color:#93c5fd}
+.lp-rev-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.lp-rev-track::-webkit-scrollbar{display:none}
+.lp-rc{flex:0 0 min(84%,300px);scroll-snap-align:start;padding:16px;border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);position:relative;display:flex;flex-direction:column;gap:10px}
+.lp-rc:before{content:"\201C";position:absolute;right:14px;top:2px;font-size:54px;line-height:1;font-family:Georgia,serif;color:rgba(34,211,238,.22)}
+.lp-rc .who{display:flex;align-items:center;gap:10px}
+.lp-rc .av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;flex-shrink:0;box-shadow:0 6px 14px -4px rgba(0,0,0,.6)}
+.lp-rc .nm{font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp-rc .tm{font-size:10px;color:#94a3b8}
+.lp-rc p{margin:0;font-size:12.5px;line-height:1.7;color:#cffafe;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.lp-rev-empty{text-align:center;padding:26px 16px;border-radius:20px;border:1px dashed rgba(255,255,255,.2);background:rgba(255,255,255,.03);font-size:12.5px;color:#a5f3fc;line-height:1.7}
+.lp-rev-empty i{display:block;font-size:24px;color:#22d3ee;margin-bottom:8px}
+.lp-rev-skel{flex:0 0 min(84%,300px);height:140px;border-radius:20px;background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.09),rgba(255,255,255,.04));background-size:200% 100%;animation:lpShine 1.6s linear infinite}
+
+/* faq */
+.lp-faq{max-width:600px;margin:0 auto;display:grid;gap:10px}
+.lp-faq details{border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);overflow:hidden;transition:border-color .2s}
+.lp-faq details[open]{border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.05)}
+.lp-faq summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:13.5px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.lp-faq summary::-webkit-details-marker{display:none}
+.lp-faq summary i{color:#22d3ee;font-size:12px;transition:transform .25s}
+.lp-faq details[open] summary i{transform:rotate(180deg)}
+.lp-faq details p{margin:0;padding:0 16px 15px;font-size:12.5px;line-height:1.75;color:#a5b4fc}
+
+/* final CTA */
+.lp-final{text-align:center;padding:30px 18px;border-radius:26px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(6,182,212,.22),rgba(79,70,229,.28) 55%,rgba(244,114,182,.2));border:1px solid rgba(255,255,255,.18);box-shadow:0 30px 60px -30px rgba(6,182,212,.6)}
+.lp-final:before{content:"";position:absolute;width:220px;height:220px;right:-70px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.35),transparent 70%)}
+.lp-final h2{position:relative;margin:0;font-size:22px;font-weight:800;color:#fff}
+.lp-final p{position:relative;margin:6px 0 16px;font-size:13px;color:#bae6fd}
+.lp-final .lp-cta{position:relative;margin-top:0}
+
+/* footer */
+.lp-footer{margin:0 -16px;padding:34px 20px 22px;background:linear-gradient(180deg,rgba(2,6,23,0),rgba(2,6,23,.85) 30%);border-top:1px solid rgba(255,255,255,.08)}
+.lp-fg{display:grid;gap:26px;grid-template-columns:1fr}
+@media(min-width:640px){.lp-fg{grid-template-columns:1.4fr 1fr 1fr}}
+.lp-fabout p{margin:12px 0 0;font-size:12px;line-height:1.75;color:#94a3b8;max-width:320px}
+.lp-fcol h4{margin:0 0 12px;font-size:12px;font-weight:800;letter-spacing:.08em;color:#e2e8f0;text-transform:uppercase;font-family:Inter,sans-serif}
+.lp-fcol a,.lp-fcol span.li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#94a3b8;text-decoration:none;padding:5px 0;transition:color .2s,transform .2s}
+.lp-fcol a:hover{color:#67e8f9;transform:translateX(3px)}
+.lp-fcol i{width:16px;text-align:center;color:#22d3ee;font-size:12px}
+.lp-fbadges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.lp-fbadges span{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;color:#a5f3fc;padding:5px 10px;border-radius:999px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25)}
+.lp-fbottom{margin-top:26px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;font-size:11px;color:#64748b}
+.lp-fbottom b{color:#94a3b8;font-weight:700}
+.lp-up{display:inline-flex;align-items:center;gap:6px;color:#67e8f9;text-decoration:none;font-weight:700;font-size:11px;padding:6px 12px;border-radius:999px;border:1px solid rgba(34,211,238,.3);background:rgba(34,211,238,.06)}
+
+.lp-top>*,.lp-sec{animation:lpFade .7s both}
+@media(prefers-reduced-motion:reduce){.lp-coin,.lp-hint i,.lp-hero h1 em,.lp-top>*,.lp-sec{animation:none}}
+
+/* ===== Theme lock: app-এর ডার্ক থিমের সাথে হুবহু মিল ===== */
+html{background:#0f0c29;color-scheme:dark}
+body.lp-on #app-container{padding-left:16px;padding-right:16px}
+body.lp-on{padding-bottom:0}
+body.lp-on:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(560px 360px at 88% -5%,rgba(34,211,238,.26),transparent 70%),radial-gradient(500px 340px at 0% 28%,rgba(251,191,36,.12),transparent 70%),radial-gradient(520px 380px at 100% 70%,rgba(244,114,182,.10),transparent 70%)}
+body.lp-on #view-login .lp-card,body.lp-on #view-register .lp-card{max-width:470px;margin:0 auto;position:relative}
+/* ব্রাউজার অটোফিল সাদা হয়ে যাওয়া বন্ধ */
+.lp-card input{color-scheme:dark;caret-color:#22d3ee}
+.lp-card input::placeholder{color:#64748b}
+.lp-card input:-webkit-autofill,.lp-card input:-webkit-autofill:hover,.lp-card input:-webkit-autofill:focus,.lp-card input:-webkit-autofill:active{
+ -webkit-text-fill-color:#fff!important;caret-color:#fff;border-color:rgba(34,211,238,.5)!important;
+ -webkit-box-shadow:0 0 0 1000px #131735 inset!important;box-shadow:0 0 0 1000px #131735 inset!important;transition:background-color 99999s ease-in-out 0s}
+.lp-card input[type=checkbox]{accent-color:#22d3ee}
+/* লগইন/রেজিস্টার পপআপ (SweetAlert) ডার্ক গ্লাস থিমে */
+body.lp-on{
+ --swal2-background:#1a1747;--swal2-color:#e0f2fe;--swal2-backdrop:rgba(8,6,28,.72);
+ --swal2-border-radius:1.5rem;--swal2-border:1px solid rgba(255,255,255,.16);
+ --swal2-confirm-button-background-color:#0891b2;--swal2-confirm-button-border-radius:.9rem;
+ --swal2-cancel-button-border-radius:.9rem;--swal2-deny-button-border-radius:.9rem;
+ --swal2-input-background:rgba(2,6,23,.6);--swal2-input-border:1px solid rgba(255,255,255,.2);
+ --swal2-validation-message-background:rgba(255,255,255,.08);--swal2-validation-message-color:#e0f2fe;
+ --swal2-toast-border:1px solid rgba(255,255,255,.16);--swal2-footer-border-color:rgba(255,255,255,.12)}
+body.lp-on .swal2-popup{background-image:linear-gradient(135deg,#0f0c29,#302b63 60%,#24243e);box-shadow:0 30px 70px -25px rgba(0,0,0,.9),0 0 50px -18px rgba(34,211,238,.45)}
+body.lp-on .swal2-title{color:#fff}
+body.lp-on .swal2-html-container{color:#bae6fd}
+body.lp-on .swal2-confirm{background-image:linear-gradient(90deg,#06b6d4,#2563eb 60%,#4f46e5)!important}
+</style>
 </head>
 <body class="text-slate-100 min-h-screen pb-24 max-w-md mx-auto shadow-2xl relative flex flex-col justify-between border-x border-white/10">
 
@@ -452,17 +628,36 @@
     <!-- MAIN VIEWS CONTAINER -->
     <main id="app-container" class="px-4 pt-4 flex-1">
 
+
+        <!-- LANDING TOP -->
+        <div class="lp-top">
+            <div class="lp-nav">
+                <div class="lp-brand"><div class="lg"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-dup-src="#fav-src" alt="Logo"></div><b>ONLINE JOB</b></div>
+                <span class="lp-secure"><i class="fa-solid fa-shield-halved"></i> নিরাপদ লগইন</span>
+            </div>
+            <div class="lp-hero">
+                <span class="lp-badge"><i class="fa-solid fa-bolt"></i> বাংলাদেশের অনলাইন আর্নিং প্ল্যাটফর্ম</span>
+                <div class="lp-coins" aria-hidden="true"><div class="lp-coin c1">৳</div><div class="lp-coin c2">৳</div><div class="lp-coin c3">৳</div></div>
+                <h1>ঘরে বসেই শুরু হোক<br><em>আপনার অনলাইন আয়</em></h1>
+                <p class="lp-lead">সার্ভে, স্পিন হুইল ও রেফারের মতো সহজ উপায়ে আয় করুন। জমানো টাকা তুলুন বিকাশ বা নগদে।</p>
+                <div class="lp-cta">
+                    <a href="#register" class="lp-btn pri"><i class="fa-solid fa-rocket"></i> এখনই শুরু করুন</a>
+                    <a href="#login" class="lp-btn sec"><i class="fa-solid fa-right-to-bracket"></i> লগইন</a>
+                </div>
+                <div class="lp-pills">
+                    <span class="lp-pill"><i class="fa-solid fa-mobile-screen"></i> মোবাইলেই সব কাজ</span>
+                    <span class="lp-pill"><i class="fa-solid fa-money-bill-transfer"></i> বিকাশ / নগদে উইথড্র</span>
+                    <span class="lp-pill"><i class="fa-solid fa-users"></i> রেফারে টিম বানান</span>
+                </div>
+                <p class="lp-hint">নিচে লগইন করুন অথবা নতুন অ্যাকাউন্ট খুলুন<i class="fa-solid fa-chevron-down"></i></p>
+            </div>
+        </div>
+
         <!-- LOGIN VIEW -->
         <section id="view-login" class="spa-view my-auto py-4">
-            <div class="relative glass-card p-6 rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-                <div class="text-center mb-6 relative">
-                    <div class="w-20 h-20 mx-auto mb-3 animate-bounce-slow shadow-2xl rounded-full overflow-hidden border-2 border-cyan-400 shadow-cyan-400/50">
-                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-dup-src="#fav-src" class="w-full h-full object-cover" alt="Logo">
-                    </div>
-                    <span class="inline-block bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[10px] px-3.5 py-1 rounded-full font-bold uppercase tracking-wider mb-1.5 font-en shadow-sm">⚡ Fast &amp; Secure Login</span>
-                    <h2 class="text-2xl font-black text-white tracking-tight">ONLINE JOB</h2>
-                    <p class="text-xs text-cyan-200 mt-0.5">আপনার অ্যাকাউন্টে লগইন করুন</p>
-                </div>
+            <div class="relative glass-card lp-card p-6 rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+                <div class="lp-tabs"><a href="#login" class="on">লগইন</a><a href="#register">রেজিস্টার</a></div>
+                <div class="lp-ttl"><h2>স্বাগতম, ফিরে আসায়</h2><p>আপনার অ্যাকাউন্টে লগইন করুন</p></div>
 
                 <form id="login-form" class="space-y-4 relative">
                     <div>
@@ -502,14 +697,9 @@
 
         <!-- REGISTER VIEW -->
         <section id="view-register" class="spa-view hidden my-auto py-2">
-            <div class="relative glass-card p-5 rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-                <div class="text-center mb-4 relative">
-                    <div class="w-16 h-16 mx-auto mb-2 shadow-xl rounded-full overflow-hidden border-2 border-cyan-400 shadow-cyan-400/50">
-                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-dup-src="#fav-src" class="w-full h-full object-cover" alt="Logo">
-                    </div>
-                    <h2 class="text-xl font-black text-white tracking-tight">নতুন অ্যাকাউন্ট খুলুন</h2>
-                    <p class="text-[11px] text-cyan-200">সহজেই তথ্য দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন</p>
-                </div>
+            <div class="relative glass-card lp-card p-5 rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+                <div class="lp-tabs"><a href="#login">লগইন</a><a href="#register" class="on">রেজিস্টার</a></div>
+                <div class="lp-ttl"><h2>নতুন অ্যাকাউন্ট খুলুন</h2><p>সহজেই তথ্য দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন</p></div>
 
                 <form id="register-form" class="space-y-3 relative">
                     <div>
@@ -596,6 +786,105 @@
                 </div>
             </div>
         </section>
+
+
+        <!-- LANDING BOTTOM -->
+        <div class="lp-bottom">
+            <section class="lp-sec">
+                <span class="lp-kick">How it works</span>
+                <h2 class="lp-h">শুরু করবেন যেভাবে</h2>
+                <p class="lp-sub">তিনটি ধাপেই আপনি রেডি</p>
+                <ol class="lp-steps">
+                    <li><span class="n">1</span><div><h3>রেজিস্টার করুন</h3><p>নাম, জিমেইল ও মোবাইল নম্বর দিয়ে এক মিনিটেই অ্যাকাউন্ট খুলুন।</p></div></li>
+                    <li><span class="n">2</span><div><h3>অ্যাকাউন্ট ভেরিফাই করুন</h3><p>ভেরিফাই সম্পন্ন হলে সব সুবিধা আনলক হবে।</p></div></li>
+                    <li><span class="n">3</span><div><h3>আয় করুন ও উইথড্র নিন</h3><p>কাজ সম্পন্ন করে ব্যালেন্স জমান, তারপর পছন্দের মাধ্যমে তুলে নিন।</p></div></li>
+                </ol>
+            </section>
+
+            <section class="lp-sec">
+                <span class="lp-kick">Features</span>
+                <h2 class="lp-h">যা যা পাচ্ছেন</h2>
+                <p class="lp-sub">এক অ্যাপেই সব সুবিধা</p>
+                <div class="lp-grid">
+                    <div class="lp-f"><div class="ic"><i class="fa-solid fa-clipboard-list"></i></div><h3>সার্ভে</h3><p>সহজ সার্ভে পূরণ করে ব্যালেন্স বাড়ান।</p></div>
+                    <div class="lp-f"><div class="ic"><i class="fa-solid fa-dharmachakra"></i></div><h3>স্পিন হুইল</h3><p>ঘুরান আর পুরস্কার জিতুন।</p></div>
+                    <div class="lp-f"><div class="ic"><i class="fa-solid fa-user-plus"></i></div><h3>রেফার ও টিম</h3><p>বন্ধুদের ইনভাইট করে নিজের টিম গড়ুন।</p></div>
+                    <div class="lp-f"><div class="ic"><i class="fa-solid fa-wallet"></i></div><h3>ওয়ালেট</h3><p>ব্যালেন্স ও ইনকাম হিস্ট্রি এক জায়গায়।</p></div>
+                    <div class="lp-f"><div class="ic"><i class="fa-solid fa-inbox"></i></div><h3>ইনবক্স</h3><p>নতুন আপডেট ও নোটিফিকেশন সাথে সাথে।</p></div>
+                    <div class="lp-f"><div class="ic"><i class="fa-solid fa-star"></i></div><h3>ওয়েবসাইট রিভিউ</h3><p>অন্যদের মতামত দেখুন, নিজের মতামত দিন।</p></div>
+                </div>
+            </section>
+
+            <section class="lp-sec">
+                <div class="lp-pay">
+                    <span class="t"><i class="fa-solid fa-circle-check" style="color:#34d399"></i> পেমেন্ট নিন সহজে:</span><b class="bk">bKash</b><b class="ng">Nagad</b>
+                </div>
+            </section>
+
+            <section class="lp-sec" id="lp-reviews">
+                <span class="lp-kick">Reviews</span>
+                <h2 class="lp-h">ইউজারদের মতামত</h2>
+                <p class="lp-sub">অ্যাডমিন যাচাই করা আসল রিভিউ</p>
+                <div id="lp-rev-sum" class="lp-rev-sum" style="display:none">
+                    <span class="avg" id="lp-rev-avg">0.0</span>
+                    <div><div class="st" id="lp-rev-stars">☆☆☆☆☆</div><div class="ct" id="lp-rev-count"></div></div>
+                </div>
+                <div id="lp-rev-track" class="lp-rev-track" aria-live="polite">
+                    <div class="lp-rev-skel"></div><div class="lp-rev-skel"></div>
+                </div>
+            </section>
+
+            <section class="lp-sec">
+                <span class="lp-kick">FAQ</span>
+                <h2 class="lp-h">সচরাচর জিজ্ঞাসা</h2>
+                <p class="lp-sub">শুরুর আগে যা জানতে চান</p>
+                <div class="lp-faq">
+                    <details><summary>কীভাবে শুরু করবো? <i class="fa-solid fa-chevron-down"></i></summary><p>উপরের ফর্মে নাম, জিমেইল, মোবাইল নম্বর ও পাসওয়ার্ড দিয়ে রেজিস্টার করুন। এরপর অ্যাকাউন্ট ভেরিফাই করলে সব সুবিধা আনলক হবে।</p></details>
+                    <details><summary>টাকা কীভাবে তুলবো? <i class="fa-solid fa-chevron-down"></i></summary><p>জমানো ব্যালেন্স আপনি বিকাশ বা নগদে উইথড্র নিতে পারবেন।</p></details>
+                    <details><summary>রেফার করলে কী হয়? <i class="fa-solid fa-chevron-down"></i></summary><p>বন্ধুদের ইনভাইট করে নিজের টিম গড়তে পারবেন। রেজিস্টারের সময় রেফার কোড দিলে সেটি যুক্ত হয়ে যায়।</p></details>
+                    <details><summary>রিভিউ কীভাবে দেখানো হয়? <i class="fa-solid fa-chevron-down"></i></summary><p>ইউজাররা রিভিউ পাঠালে অ্যাডমিন যাচাই করেন। শুধু অনুমোদিত রিভিউই সবার সামনে দেখানো হয়।</p></details>
+                </div>
+            </section>
+
+            <section class="lp-sec">
+                <div class="lp-final">
+                    <h2>আজই আপনার আয় শুরু করুন</h2>
+                    <p>এক মিনিটেই অ্যাকাউন্ট খুলে ফেলুন</p>
+                    <div class="lp-cta">
+                        <a href="#register" class="lp-btn pri"><i class="fa-solid fa-user-plus"></i> রেজিস্টার করুন</a>
+                        <a href="#login" class="lp-btn sec"><i class="fa-solid fa-right-to-bracket"></i> লগইন</a>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="lp-footer">
+                <div class="lp-fg">
+                    <div class="lp-fabout">
+                        <div class="lp-brand"><div class="lg"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-dup-src="#fav-src" alt="Logo"></div><b>ONLINE JOB</b></div>
+                        <p>সার্ভে, স্পিন হুইল ও রেফারের মাধ্যমে ঘরে বসেই আয় করার একটি বাংলাদেশি আর্নিং প্ল্যাটফর্ম।</p>
+                        <div class="lp-fbadges">
+                            <span><i class="fa-solid fa-shield-halved"></i> নিরাপদ</span>
+                            <span><i class="fa-solid fa-mobile-screen"></i> মোবাইল ফ্রেন্ডলি</span>
+                        </div>
+                    </div>
+                    <div class="lp-fcol">
+                        <h4>দ্রুত লিংক</h4>
+                        <a href="#login"><i class="fa-solid fa-right-to-bracket"></i> লগইন</a>
+                        <a href="#register"><i class="fa-solid fa-user-plus"></i> রেজিস্টার</a>
+                        <a href="#lp-reviews" data-lp-scroll="lp-reviews"><i class="fa-solid fa-star"></i> রিভিউ</a>
+                    </div>
+                    <div class="lp-fcol">
+                        <h4>পেমেন্ট মাধ্যম</h4>
+                        <span class="li"><i class="fa-solid fa-wallet"></i> bKash</span>
+                        <span class="li"><i class="fa-solid fa-wallet"></i> Nagad</span>
+                    </div>
+                </div>
+                <div class="lp-fbottom">
+                    <span>© <span id="lp-year">2026</span> <b>ONLINE JOB</b> · Bangladesh Earning Platform</span>
+                    <a href="#login" class="lp-up" data-lp-scroll="top"><i class="fa-solid fa-arrow-up"></i> উপরে যান</a>
+                </div>
+            </footer>
+        </div>
 
         <!-- DASHBOARD VIEW -->
         <section id="view-dashboard" class="spa-view hidden space-y-4">
@@ -905,7 +1194,7 @@
 
                     <!-- VERIFY MODE TABS (ইনস্ট্যান্ট / ম্যানুয়াল) -->
                     <div id="verify-mode-tabs" class="dp-tabs dp-hide">
-                        <button type="button" id="vm-tab-instant" class="dp-tab active" onclick="setVerifyMode('instant')"><i class="fa-solid fa-bolt"></i> ইনস্ট্যান্ট <span class="dp-tag">AUTO</span></button>
+                        <button type="button" id="vm-tab-instant" class="dp-tab active" onclick="setVerifyMode('instant')"><i class="fa-solid fa-bolt"></i> instant pay <span class="dp-tag">AUTO</span></button>
                         <button type="button" id="vm-tab-manual" class="dp-tab" onclick="setVerifyMode('manual')"><i class="fa-solid fa-receipt"></i> ম্যানুয়াল</button>
                     </div>
 
@@ -915,7 +1204,7 @@
                             <div class="dpx-live"><span class="dpx-dot"></span> AUTO · INSTANT</div>
                             <div class="dpx-bolt"><i class="fa-solid fa-bolt"></i></div>
                             <div class="dpx-h">ইনস্ট্যান্ট অটো ভেরিফাই</div>
-                            <div class="dpx-p">পেমেন্ট শেষ হওয়ার সাথে সাথেই অ্যাকাউন্ট নিজে থেকে ভেরিফাই — এডমিনের অপেক্ষা নেই</div>
+                            <div class="dpx-p">পেমেন্ট শেষ হওয়ার সাথে সাথেই অ্যাকাউন্ট নিজে থেকে ভেরিফাই </div>
                             <div class="dpx-fee"><span>ভেরিফিকেশন ফি</span><b class="verify-fee-amount-display font-en">৳15</b></div>
                         </div>
 
@@ -4339,6 +4628,68 @@
             });
         }
 
+        // ==== ল্যান্ডিং পেজের রিভিউ (লগইনের আগেও দেখা যাবে) ====
+        function listenLandingReviews() {
+            const track = document.querySelector('#lp-rev-track');
+            if (!track) return;
+            const yr = document.querySelector('#lp-year');
+            if (yr) yr.textContent = new Date().getFullYear();
+            const emptyHtml = (msg) => `<div class="lp-rev-empty" style="flex:1 1 100%"><i class="fa-solid fa-comment-dots"></i>${msg}</div>`;
+            try {
+                const q = query(collection(db, "reviews"), where("isApproved", "==", true));
+                onSnapshot(q, (snapshot) => {
+                    const items = snapshot.docs
+                        .map(d => ({ id: d.id, ...d.data() }))
+                        .sort((a, b) => tsToMillis(b.createdAt) - tsToMillis(a.createdAt));
+                    const sum = document.querySelector('#lp-rev-sum');
+                    if (!items.length) {
+                        if (sum) sum.style.display = 'none';
+                        track.innerHTML = emptyHtml('এখনো কোনো রিভিউ নেই।<br>লগইন করে আপনিই প্রথম মতামত দিন!');
+                        return;
+                    }
+                    const avg = items.reduce((s, r) => s + (Number(r.rating) || 0), 0) / items.length;
+                    document.querySelector('#lp-rev-avg').textContent = avg.toFixed(1);
+                    document.querySelector('#lp-rev-stars').textContent = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+                    document.querySelector('#lp-rev-count').textContent = `${items.length} টি রিভিউ`;
+                    if (sum) sum.style.display = 'flex';
+                    track.innerHTML = items.slice(0, 12).map(item => {
+                        const name = item.userName || 'একজন ইউজার';
+                        const initial = name.trim().charAt(0).toUpperCase();
+                        return `<article class="lp-rc">
+                            <div class="who">
+                                <div class="av" style="background:${avatarColorFor(name)}">${esc(initial)}</div>
+                                <div style="min-width:0;flex:1"><div class="nm">${esc(name)}</div>${starsHtml(item.rating, 12)}</div>
+                                <span class="tm">${timeAgoBn(item.createdAt)}</span>
+                            </div>
+                            ${item.text ? `<p>${esc(item.text)}</p>` : ''}
+                        </article>`;
+                    }).join('');
+                }, (err) => {
+                    console.warn('landing reviews error:', err.message);
+                    track.innerHTML = emptyHtml('রিভিউ দেখতে লগইন করুন।');
+                });
+            } catch (e) {
+                track.innerHTML = emptyHtml('রিভিউ দেখতে লগইন করুন।');
+            }
+        }
+        setTimeout(listenLandingReviews, 0);
+        // নেটওয়ার্ক সমস্যায় রিভিউ লোড না হলে স্কেলিটন যেন আটকে না থাকে
+        setTimeout(() => {
+            const t = document.querySelector('#lp-rev-track');
+            if (t && t.querySelector('.lp-rev-skel')) {
+                t.innerHTML = '<div class="lp-rev-empty" style="flex:1 1 100%"><i class="fa-solid fa-comment-dots"></i>রিভিউ লোড করা যায়নি। লগইন করে রিভিউ দেখুন।</div>';
+            }
+        }, 9000);
+
+        // ফুটার লিংকের স্মুথ স্ক্রল
+        document.addEventListener('click', (e) => {
+            const a = e.target.closest('[data-lp-scroll]');
+            if (!a) return;
+            const key = a.getAttribute('data-lp-scroll');
+            if (key === 'top') { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+            else { e.preventDefault(); document.getElementById(key)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+
         function listenToUserWithdrawalHistory() {
             if(!currentUser) return;
 
@@ -5182,4 +5533,14 @@
         });
     </script>
 
-<iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" tabindex="-1" vspace="0" width="100%" aria-hidden="true" id="I0_1788669459053" name="I0_1788669459053" src="https://income-platform-329ba.firebaseapp.com/__/auth/iframe?apiKey=AIzaSyBB8Y2qZWM3BIkVOReHprXLzhJwtr5D1qk&amp;appName=%5BDEFAULT%5D&amp;v=10.8.0&amp;eid=p&amp;usegapi=1&amp;jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.zhTT8Br0Ho8.O%2Fd%3D1%2Frs%3DAHpOoo-7LeULGjNQZRvhdu3G71akb6JY6A%2Fm%3D__features__#id=I0_1788669459053&amp;_gfid=I0_1788669459053&amp;parent=https%3A%2F%2Fincomeplatformcom.netlify.app&amp;pfname=&amp;rpctoken=36491805" style="position: absolute; top: -100px; width: 1px; height: 1px;"></iframe></body></html>
+<iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" tabindex="-1" vspace="0" width="100%" aria-hidden="true" id="I0_1788669459053" name="I0_1788669459053" src="https://income-platform-329ba.firebaseapp.com/__/auth/iframe?apiKey=AIzaSyBB8Y2qZWM3BIkVOReHprXLzhJwtr5D1qk&amp;appName=%5BDEFAULT%5D&amp;v=10.8.0&amp;eid=p&amp;usegapi=1&amp;jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.zhTT8Br0Ho8.O%2Fd%3D1%2Frs%3DAHpOoo-7LeULGjNQZRvhdu3G71akb6JY6A%2Fm%3D__features__#id=I0_1788669459053&amp;_gfid=I0_1788669459053&amp;parent=https%3A%2F%2Fincomeplatformcom.netlify.app&amp;pfname=&amp;rpctoken=36491805" style="position: absolute; top: -100px; width: 1px; height: 1px;"></iframe><script>
+(function(){
+  function sync(){var l=document.getElementById('view-login'),r=document.getElementById('view-register');
+    var on=[l,r].some(function(e){return e&&!e.classList.contains('hidden')});
+    document.body.classList.toggle('lp-on',on);}
+  var c=document.getElementById('app-container');
+  if(c&&window.MutationObserver){new MutationObserver(sync).observe(c,{subtree:true,attributes:true,attributeFilter:['class']});}
+  window.addEventListener('hashchange',sync);sync();
+})();
+</script>
+</body></html>
