@@ -2843,9 +2843,108 @@ body.lp-on .swal2-confirm{background-image:linear-gradient(90deg,#06b6d4,#2563eb
 
         window.addEventListener('hashchange', handleRouting);
 
+        // ---------- AUTO PROOF APPROVE (ইউজারের নিজের প্রুফ — অ্যাডমিন অফলাইন থাকলেও কাজ করে) ----------
+        // এডমিন প্যানেলে "অটো অ্যাপ্রুভ" ON থাকলে, ইউজার সাইটে ঢুকলে/খোলা রাখলে তার pending প্রুফ ১–২ মিনিট পর নিজে অ্যাপ্রুভ হয়ে টাকা যোগ হয়
+        let autoProofClaimUid = null;
+        let autoProofClaimUnsubs = [];
+        const autoProofClaimTimers = new Map();
+        const autoProofClaimBusy = new Set();
+        function startAutoProofClaim(uid) {
+            if (autoProofClaimUid === uid) return;
+            autoProofClaimUnsubs.forEach(u => { try { u(); } catch {} });
+            autoProofClaimUnsubs = [];
+            autoProofClaimTimers.forEach(t => clearTimeout(t));
+            autoProofClaimTimers.clear();
+            autoProofClaimUid = uid;
+
+            let cfg = { enabled: false, min: 60, max: 120 };
+            let pendingDocs = [];
+
+            const delayMs = (id) => {
+                let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+                const min = Math.max(0, Number(cfg.min) || 60);
+                const max = Math.max(min, Number(cfg.max) || 120);
+                return (min + (h % (max - min + 1))) * 1000;
+            };
+
+            const claim = async (proofId) => {
+                if (autoProofClaimBusy.has(proofId)) return;
+                autoProofClaimBusy.add(proofId);
+                try {
+                    let jobForCount = null;
+                    const done = await runTransaction(db, async (tx) => {
+                        const pRef = doc(db, "job_proofs", proofId);
+                        const pSnap = await tx.get(pRef);
+                        if (!pSnap.exists()) return false;
+                        const p = pSnap.data();
+                        if (p.status !== 'pending' || p.userId !== uid) return false;
+                        let reward = 0;
+                        if (p.jobId && p.jobId !== 'admin_job') {
+                            const jSnap = await tx.get(doc(db, "jobs", p.jobId));
+                            if (jSnap.exists()) {
+                                reward = Number(jSnap.data().reward) || 0;
+                                if (jSnap.data().type === 'promote') jobForCount = { id: p.jobId, data: jSnap.data() };
+                            }
+                        }
+                        tx.update(pRef, { status: 'approved', approvedAt: serverTimestamp(), autoApproved: true });
+                        tx.update(doc(db, "users", uid), {
+                            balance: increment(reward),
+                            totalEarned: increment(reward),
+                            todayEarned: increment(reward)
+                        });
+                        return true;
+                    });
+                    // প্রমোট টাস্ক হলে completedCount বাড়ানো (পারমিশন না থাকলে চুপচাপ স্কিপ)
+                    if (done && jobForCount) {
+                        try {
+                            const needed = Number(jobForCount.data.usersNeeded) || 0;
+                            const newCount = (Number(jobForCount.data.completedCount) || 0) + 1;
+                            const upd = { completedCount: increment(1) };
+                            if (needed > 0 && newCount >= needed) upd.status = 'completed';
+                            await updateDoc(doc(db, "jobs", jobForCount.id), upd);
+                        } catch (e) { console.warn('job count update skipped:', e.message); }
+                    }
+                } catch (e) {
+                    console.warn('Auto proof approve failed:', e.message);
+                } finally {
+                    autoProofClaimBusy.delete(proofId);
+                }
+            };
+
+            const schedule = () => {
+                if (!cfg.enabled) { autoProofClaimTimers.forEach(t => clearTimeout(t)); autoProofClaimTimers.clear(); return; }
+                const ids = new Set(pendingDocs.map(d => d.id));
+                [...autoProofClaimTimers.keys()].forEach(id => { if (!ids.has(id)) { clearTimeout(autoProofClaimTimers.get(id)); autoProofClaimTimers.delete(id); } });
+                pendingDocs.forEach(d => {
+                    if (autoProofClaimTimers.has(d.id)) return;
+                    const created = d.data().createdAt?.toMillis ? d.data().createdAt.toMillis() : Date.now();
+                    const wait = Math.max(500, created + delayMs(d.id) - Date.now());
+                    autoProofClaimTimers.set(d.id, setTimeout(() => {
+                        autoProofClaimTimers.delete(d.id);
+                        if (cfg.enabled) claim(d.id);
+                    }, wait));
+                });
+            };
+
+            autoProofClaimUnsubs.push(onSnapshot(doc(db, "settings", "general"), (s) => {
+                const g = s.exists() ? s.data() : {};
+                cfg = { enabled: g.autoProofApprove === true, min: Number(g.autoProofDelayMin) || 60, max: Number(g.autoProofDelayMax) || 120 };
+                autoProofClaimTimers.forEach(t => clearTimeout(t)); autoProofClaimTimers.clear();
+                schedule();
+            }, () => {}));
+
+            autoProofClaimUnsubs.push(onSnapshot(
+                query(collection(db, "job_proofs"), where("userId", "==", uid), where("status", "==", "pending")),
+                (snap) => { pendingDocs = snap.docs; schedule(); },
+                () => { autoProofClaimUid = null; }
+            ));
+        }
+
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                startAutoProofClaim(user.uid);
                 document.querySelector('#header-user-card').classList.remove('hidden');
                 document.querySelector('#app-header').classList.remove('hidden');
                 document.querySelector('#app-bottom-nav').classList.remove('hidden');
