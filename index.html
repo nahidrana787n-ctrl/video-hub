@@ -2868,7 +2868,7 @@ body.lp-on .swal2-confirm{background-image:linear-gradient(90deg,#06b6d4,#2563eb
             };
 
             const claim = async (proofId) => {
-                if (autoProofClaimBusy.has(proofId)) return;
+                if (autoProofClaimBusy.has(proofId)) return false;
                 autoProofClaimBusy.add(proofId);
                 try {
                     let jobForCount = null;
@@ -2904,8 +2904,10 @@ body.lp-on .swal2-confirm{background-image:linear-gradient(90deg,#06b6d4,#2563eb
                             await updateDoc(doc(db, "jobs", jobForCount.id), upd);
                         } catch (e) { console.warn('job count update skipped:', e.message); }
                     }
+                    return done;
                 } catch (e) {
                     console.warn('Auto proof approve failed:', e.message);
+                    return null;
                 } finally {
                     autoProofClaimBusy.delete(proofId);
                 }
@@ -2919,10 +2921,16 @@ body.lp-on .swal2-confirm{background-image:linear-gradient(90deg,#06b6d4,#2563eb
                     if (autoProofClaimTimers.has(d.id)) return;
                     const created = d.data().createdAt?.toMillis ? d.data().createdAt.toMillis() : Date.now();
                     const wait = Math.max(500, created + delayMs(d.id) - Date.now());
-                    autoProofClaimTimers.set(d.id, setTimeout(() => {
-                        autoProofClaimTimers.delete(d.id);
-                        if (cfg.enabled) claim(d.id);
-                    }, wait));
+                    const arm = (ms, tries) => {
+                        autoProofClaimTimers.set(d.id, setTimeout(async () => {
+                            autoProofClaimTimers.delete(d.id);
+                            if (!cfg.enabled) return;
+                            const r = await claim(d.id);
+                            // এরর হলে (যেমন ঘড়ির সামান্য পার্থক্য) ২০ সেকেন্ড পর আবার চেষ্টা, সর্বোচ্চ ৫ বার
+                            if (r === null && tries < 5 && cfg.enabled) arm(20000, tries + 1);
+                        }, ms));
+                    };
+                    arm(wait, 0);
                 });
             };
 
